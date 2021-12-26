@@ -1,0 +1,4 @@
+cchardet
+aiodns
+aiohttp
+sanic
