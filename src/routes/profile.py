@@ -92,128 +92,103 @@ class Route:
         headshot     = request.args.get("headshot")
 
         # image storage for closing
-        image               = None
-        background_image    = None
-        moon_image          = None
-        moon_outline_image  = None
-        headshot_image      = None
-        gradient_text_image = None
+        image          = None
+        headshot_image = None
 
         # buffer storage
         headshot_buffer = None
-        img_io          = None
 
         if not self.session:
             self.session = aiohttp.ClientSession()
 
-        background_image = Image.open(f"./assets/backgrounds/{background}.png")
-        image            = Image.new("RGB", (background_image.width, background_image.height))
+        with Image.open(f"./assets/backgrounds/{background}.png") as background_image:
+            image = Image.new("RGBA", (background_image.width, background_image.height))
 
-        if headshot:
-            async with self.session.get(headshot) as resp:
-                moon_image = Image.open("./assets/props/moon.png")
-                moon_outline_image = Image.open("./assets/props/moon_outline.png")
+            if headshot:
+                async with self.session.get(headshot) as resp:
+                    with Image.open("./assets/props/moon.png") as moon_image:
+                        with Image.open("./assets/props/moon_outline.png") as moon_outline_image:
+                            headshot_buffer = BytesIO(await resp.read())
+                            headshot_image  = Image.open(headshot_buffer)
+                            headshot_image  = headshot_image.resize((220, 220))
 
-                headshot_buffer = BytesIO(await resp.read())
-                headshot_image  = Image.open(headshot_buffer)
-                headshot_image  = headshot_image.resize((220, 220))
+                            image.paste(moon_image, (0, 0), moon_image)
+                            image.paste(headshot_image, (160, 70), headshot_image)
 
-                image.paste(moon_image, (90, 210), moon_image)
-                image.paste(headshot_image, (160, 230), headshot_image)
-                image.paste(moon_outline_image, (106, 214), moon_outline_image)
-                image.paste(background_image, (0, 0), background_image)
+                            image.paste(background_image, (0, 0), background_image)
+                            image.paste(moon_outline_image, (0, 0), moon_outline_image)
 
-        draw = ImageDraw.Draw(image)
 
-        if username:
-            username = f"@{username}"
+            draw = ImageDraw.Draw(image)
 
-            if display_name:
-                if username[1:] == display_name:
-                    # header is username. don't display display_name
+            if username:
+                username = f"@{username}"
+
+                if display_name:
+                    if username[1:] == display_name:
+                        # header is username. don't display display_name
+                        width_username = draw.textsize(username, font=self.header1)[0]
+
+                        draw.text(
+                            ((image.size[0]-width_username) / 2, 290),
+                            username,
+                            (255, 255, 255),
+                            font=self.header1
+                        )
+                    else:
+                        # show both username and display name
+                        width_display_name  = draw.textsize(display_name, font=self.header1)[0]
+                        draw.text(
+                            ((image.size[0]-width_display_name) / 2, 290),
+                            display_name,
+                            (240, 191, 60),
+                            font=self.header1)
+
+                        width_username = draw.textsize(username, font=self.header2)[0]
+                        draw.text(
+                            ((image.size[0]-width_username) / 2, 370),
+                            username,
+                            (255, 255, 255),
+                            font=self.header2)
+
+                else:
                     width_username = draw.textsize(username, font=self.header1)[0]
 
                     draw.text(
-                        ((image.size[0]-width_username) / 2, 100),
+                        ((image.size[0]-width_username) / 2, 290),
                         username,
                         (255, 255, 255),
                         font=self.header1
                     )
-                else:
-                    # show both username and display name
-                    width_display_name, len_display_name  = draw.textsize(display_name, font=self.header1)
 
-                    gradient_text_image = gradient_text(display_name, "yellow-orange", width_display_name, len_display_name, self.header1)
 
-                    image.paste(gradient_text_image, (int((image.size[0]-width_display_name) / 2), 100), gradient_text_image)
+            if description:
+                if len(description) > 230:
+                    description = f"{description[:230]}..."
 
-                    width_username, length_username = draw.textsize(username, font=self.header2)
-
-                    draw.text(
-                        ((image.size[0]-width_username) / 2, 170),
-                        username,
-                        (255, 255, 255),
-                        font=self.header2
-                    )
-
-            else:
-                width_username = draw.textsize(username, font=self.header1)[0]
+                wrapper = TextWrapper(description, self.header4, image.width-70)
+                wrapped_text = wrapper.wrapped_text()
 
                 draw.text(
-                    ((image.size[0]-width_username) / 2, 100),
-                    username,
+                    (40, 505),
+                    wrapped_text,
                     (255, 255, 255),
-                    font=self.header1
+                    font=self.header4
                 )
 
-        if description:
-            width_desc, len_desc = draw.textsize("Description:", font=self.header2)
-
-            gradient_text_image = gradient_text("Description:", "yellow-orange", width_desc, len_desc, self.header2)
-
-            image.paste(gradient_text_image, (int((image.size[0]-width_desc) / 2), 460), gradient_text_image)
-
-            if len(description) > 300:
-                description = f"{description[:300]}..."
-
-            wrapper = TextWrapper(description, self.header4, image.width-10)
-            wrapped_text = wrapper.wrapped_text()
-
-            draw.text(
-                (10, 505),
-                wrapped_text,
-                (255, 255, 255),
-                font=self.header4
-            )
-
         try:
-            img_io = BytesIO()
-            image.save(img_io, "JPEG", quality=70)
-            image.seek(0)
+            with BytesIO() as bf:
+                image.save(bf, "PNG", quality=70)
+                image.seek(0)
 
-            return raw(img_io.getvalue())
+                return raw(bf.getvalue())
 
         finally:
-            if img_io:
-                img_io.close()
-
             if headshot_buffer:
                 headshot_buffer.close()
 
             if image:
                 image.close()
 
-            if background_image:
-                background_image.close()
-
-            if moon_image:
-                moon_image.close()
-
-            if moon_outline_image:
-                moon_outline_image.close()
-
             if headshot_image:
                 headshot_image.close()
-
-            if gradient_text_image:
-                gradient_text_image.close()

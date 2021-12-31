@@ -1,9 +1,13 @@
 from sanic import Sanic
 from os import listdir
+from constants import SERVER_HOST, SERVER_PORT
 import importlib
+import logging
+
+logging.basicConfig()
 
 def register_routes():
-    routes = listdir("routes/")
+    routes = listdir("src/routes/")
 
     for route_name in [x.replace(".py", "") for x in routes if not x.startswith("__")]:
         route_module = importlib.import_module(f"routes.{route_name}")
@@ -18,11 +22,10 @@ def register_routes():
 
 
 if __name__ == '__main__':
-    app = Sanic("ImageServer")
+    app = Sanic("BloxlinkImageServer")
 
-    app.static('/assets', "./assets")
+    app.static("/assets", "./assets")
 
 
     register_routes()
-    app.run(port=8000, debug=True)
-
+    app.run(SERVER_HOST, SERVER_PORT, debug=True)

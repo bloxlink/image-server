@@ -1,7 +1,22 @@
+SERVER_HOST = "0.0.0.0"
+SERVER_PORT = 8000
+
 IMAGE_CONFIG = {
-    "stary_night.jpg": {
-        "name": "Stary Night",
+    "starry_night.png": {
+        "name": "Starry Night",
         "acquirable": True,
-        "available": True
+        "available": True,
+        "internal_name": "starry_night",
+        "categories": [],
+        "exclude_from_all_backgrounds": False
+    },
+    "winter_night.png": {
+        "name": "Winter Night",
+        "acquirable": True,
+        "available": True,
+        "internal_name": "winter_night",
+        "categories": ["Seasonal"],
+        "exclude_from_all_backgrounds": False
     }
 }
+
