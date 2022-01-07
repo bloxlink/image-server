@@ -1,77 +1,13 @@
 from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-from utils.image import gradient_text
+from utils.text_wrap import TextWrapper
+from utils.text_cleanse import cleanse
 import aiohttp
 
 
-
-class TextWrapper(object):
-    # https://stackoverflow.com/questions/7698231/python-pil-draw-multiline-text-on-image
-    """ Helper class to wrap text in lines, based on given text, font
-        and max allowed line width.
-    """
-
-    def __init__(self, text, font, max_width):
-        self.text = text
-        self.text_lines = [
-            ' '.join([w.strip() for w in l.split(' ') if w])
-            for l in text.split('\n')
-            if l
-        ]
-        self.font = font
-        self.max_width = max_width
-
-        self.draw = ImageDraw.Draw(
-            Image.new(
-                mode='RGB',
-                size=(100, 100)
-            )
-        )
-
-        self.space_width = self.draw.textsize(
-            text=' ',
-            font=self.font
-        )[0]
-
-    def get_text_width(self, text):
-        return self.draw.textsize(
-            text=text,
-            font=self.font
-        )[0]
-
-    def wrapped_text(self):
-        wrapped_lines = []
-        buf = []
-        buf_width = 0
-
-        for line in self.text_lines:
-            for word in line.split(' '):
-                word_width = self.get_text_width(word)
-
-                expected_width = word_width if not buf else \
-                    buf_width + self.space_width + word_width
-
-                if expected_width <= self.max_width:
-                    # word fits in line
-                    buf_width = expected_width
-                    buf.append(word)
-                else:
-                    # word doesn't fit in line
-                    wrapped_lines.append(' '.join(buf))
-                    buf = [word]
-                    buf_width = word_width
-
-            if buf:
-                wrapped_lines.append(' '.join(buf))
-                buf = []
-                buf_width = 0
-
-        return '\n'.join(wrapped_lines)
-
-
 class Route:
-    PATH = "/profile"
+    PATH = "/card/front"
     METHODS = ("GET", )
 
     def __init__(self):
@@ -101,7 +37,25 @@ class Route:
         if not self.session:
             self.session = aiohttp.ClientSession()
 
-        with Image.open(f"./assets/backgrounds/{background}.png") as background_image:
+        first_font_size = self.header1
+        second_font_size = self.header2
+
+        adjusted_name_pos_1 = 290
+        adjusted_name_pos_2 = 370
+
+        if len(username) >= 20:
+            username = f"{username[:20]}..."
+
+        if len(display_name) >= 20:
+            display_name = f"{display_name[:20]}..."
+
+        if len(username) >= 10 or len(display_name) >= 10:
+            first_font_size = self.header2
+            second_font_size = self.header2
+            adjusted_name_pos_1 = 320
+            adjusted_name_pos_2 = 370
+
+        with Image.open(f"./assets/backgrounds/front/{background}.png") as background_image:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
             if headshot:
@@ -127,42 +81,44 @@ class Route:
                 if display_name:
                     if username[1:] == display_name:
                         # header is username. don't display display_name
-                        width_username = draw.textsize(username, font=self.header1)[0]
+                        width_username = draw.textsize(username, font=first_font_size)[0]
 
                         draw.text(
-                            ((image.size[0]-width_username) / 2, 290),
+                            ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                             username,
                             (255, 255, 255),
-                            font=self.header1
+                            font=first_font_size
                         )
                     else:
                         # show both username and display name
-                        width_display_name  = draw.textsize(display_name, font=self.header1)[0]
+                        width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
                         draw.text(
-                            ((image.size[0]-width_display_name) / 2, 290),
+                            ((image.size[0]-width_display_name) / 2, adjusted_name_pos_1),
                             display_name,
                             (240, 191, 60),
-                            font=self.header1)
+                            font=first_font_size)
 
-                        width_username = draw.textsize(username, font=self.header2)[0]
+                        width_username = draw.textsize(username, font=second_font_size)[0]
                         draw.text(
-                            ((image.size[0]-width_username) / 2, 370),
+                            ((image.size[0]-width_username) / 2, adjusted_name_pos_2),
                             username,
                             (255, 255, 255),
-                            font=self.header2)
+                            font=second_font_size)
 
                 else:
-                    width_username = draw.textsize(username, font=self.header1)[0]
+                    width_username = draw.textsize(username, font=first_font_size)[0]
 
                     draw.text(
-                        ((image.size[0]-width_username) / 2, 290),
+                        ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                         username,
                         (255, 255, 255),
-                        font=self.header1
+                        font=first_font_size
                     )
 
 
             if description:
+                description = cleanse(description)
+
                 if len(description) > 230:
                     description = f"{description[:230]}..."
 

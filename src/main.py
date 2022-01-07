@@ -1,23 +1,32 @@
 from sanic import Sanic
-from os import listdir
+import os
 from constants import SERVER_HOST, SERVER_PORT
 import importlib
 import logging
+import pkgutil
 
 logging.basicConfig()
 
-def register_routes():
-    routes = listdir("src/routes/")
+def register_routes(path=None):
+    path = path or ["src/routes"]
+    files = os.listdir('/'.join(path))
 
-    for route_name in [x.replace(".py", "") for x in routes if not x.startswith("__")]:
-        route_module = importlib.import_module(f"routes.{route_name}")
+    for file_or_folder in files:
+        if "__" not in file_or_folder:
+            if os.path.isdir(f"{'/'.join(path)}/{file_or_folder}"):
+                register_routes(path + [f"{file_or_folder}"])
+            else:
+                proper_path = "/".join(path) + "/" +  file_or_folder
+                import_name = proper_path.replace("/", ".").replace(".py", "").replace("src.", "")
 
-        route = getattr(route_module, "Route")()
-        app.add_route(
-            getattr(route, "handler"),
-            getattr(route, "PATH"),
-            getattr(route, "METHODS")
-        )
+                route_module = importlib.import_module(import_name)
+                route = getattr(route_module, "Route")()
+
+                app.add_route(
+                    getattr(route, "handler"),
+                    getattr(route, "PATH"),
+                    getattr(route, "METHODS")
+                )
 
 
 
