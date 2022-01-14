@@ -2,7 +2,7 @@ SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8000
 
 IMAGE_CONFIG = {
-    "starry_night.png": {
+    "starry_night": {
         "name": "Starry Night",
         "acquirable": True,
         "available": True,
@@ -10,7 +10,7 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "winter_night.png": {
+    "winter_night": {
         "name": "Winter Night",
         "acquirable": True,
         "available": True,
