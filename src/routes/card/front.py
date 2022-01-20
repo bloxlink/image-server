@@ -1,6 +1,7 @@
 from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
+from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.text_cleanse import cleanse
 import aiohttp
@@ -15,20 +16,23 @@ class Route:
         self.header2 = ImageFont.truetype("fonts/TovariSans.ttf", 50)
        # self.header3 = ImageFont.truetype("fonts/cartoonist/TovariSans.ttf", 90)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
+        self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
         self.session = None
 
     async def handler(self, request):
-        # TODO: take in a ?premium=true value to return background; otherwise, return gradient
-
-        background   = request.args.get("background")
+        background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
         username     = request.args.get("username")
         display_name = request.args.get("display_name")
         description  = request.args.get("description")
         headshot     = request.args.get("headshot")
+        overlay      = request.args.get("overlay")
+        roblox_id    = request.args.get("id")
+        roblox_age   = request.args.get("age")
+
+        background_path = IMAGE_CONFIG.get(background)["front"]
 
         # image storage for closing
-        image          = None
         headshot_image = None
 
         # buffer storage
@@ -55,7 +59,9 @@ class Route:
             adjusted_name_pos_1 = 320
             adjusted_name_pos_2 = 370
 
-        with Image.open(f"./assets/backgrounds/front/{background}.png") as background_image:
+        # TODO: if bg is deleted, then revert to default
+
+        with Image.open(background_path) as background_image:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
             if headshot:
@@ -72,6 +78,10 @@ class Route:
                             image.paste(background_image, (0, 0), background_image)
                             image.paste(moon_outline_image, (0, 0), moon_outline_image)
 
+
+            if overlay:
+                with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
+                    image.paste(overlay_image, (0, 0), overlay_image)
 
             draw = ImageDraw.Draw(image)
 
@@ -115,6 +125,23 @@ class Route:
                         font=first_font_size
                     )
 
+            roblox_id_age_offset = 10 if not overlay else 40
+
+            if roblox_age:
+                draw.text(
+                    (10, roblox_id_age_offset),
+                    f"Created {roblox_age}",
+                    (240, 191, 60),
+                    font=self.header5
+                )
+
+            if roblox_id:
+                draw.text(
+                    (10, roblox_id_age_offset+25),
+                    f"#{roblox_id}",
+                    (240, 191, 60),
+                    font=self.header5
+                )
 
             if description:
                 description = cleanse(description)

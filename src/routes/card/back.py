@@ -2,7 +2,7 @@ from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 from utils.text_cleanse import cleanse
-import aiohttp
+from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
 
 
 class Route:
@@ -15,25 +15,15 @@ class Route:
         self.header3 = ImageFont.truetype("fonts/cartoonist/TovariSans.ttf", 40)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
-        self.session = None
-
     async def handler(self, request):
         # TODO: take in a ?premium=true value to return background; otherwise, return gradient
 
-        background   = request.args.get("background")
+        background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
         username     = request.args.get("username")
         display_name = request.args.get("display_name")
         group_ranks  = request.args.get("group_ranks")
 
-        # image storage for closing
-        image          = None
-        headshot_image = None
-
-        # buffer storage
-        headshot_buffer = None
-
-        if not self.session:
-            self.session = aiohttp.ClientSession()
+        background_path = IMAGE_CONFIG.get(background)["back"]
 
         first_font_size = self.header1
         second_font_size = self.header2
@@ -59,7 +49,7 @@ class Route:
             adjusted_name_pos_1 = 80
             adjusted_name_pos_2 = 130
 
-        with Image.open(f"./assets/backgrounds/back/{background}.png") as image:
+        with Image.open(background_path) as image:
             draw = ImageDraw.Draw(image)
 
             if username:
@@ -124,19 +114,9 @@ class Route:
                     group_name_pos += 80
                     group_rank_pos += 80
 
-        try:
+
             with BytesIO() as bf:
                 image.save(bf, "PNG", quality=70)
                 image.seek(0)
 
                 return raw(bf.getvalue())
-
-        finally:
-            if headshot_buffer:
-                headshot_buffer.close()
-
-            if image:
-                image.close()
-
-            if headshot_image:
-                headshot_image.close()
