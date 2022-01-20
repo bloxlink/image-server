@@ -12,7 +12,7 @@ class Route:
     def __init__(self):
         self.header1 = ImageFont.truetype("fonts/TovariSans.ttf", 100)
         self.header2 = ImageFont.truetype("fonts/TovariSans.ttf", 50)
-        self.header3 = ImageFont.truetype("fonts/cartoonist/TovariSans.ttf", 40)
+        self.header3 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
     async def handler(self, request):
