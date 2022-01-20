@@ -44,4 +44,4 @@ if __name__ == '__main__':
 
 
     register_routes()
-    app.run(SERVER_HOST, SERVER_PORT, debug=True, workers=cpu_count)
+    app.run(SERVER_HOST, SERVER_PORT, workers=cpu_count)
