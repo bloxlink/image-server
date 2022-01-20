@@ -2,3 +2,4 @@ cchardet
 aiodns
 aiohttp
 sanic
+Pillow
