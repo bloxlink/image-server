@@ -16,8 +16,6 @@ class Route:
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
     async def handler(self, request):
-        # TODO: take in a ?premium=true value to return background; otherwise, return gradient
-
         background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
         username     = request.args.get("username")
         display_name = request.args.get("display_name")

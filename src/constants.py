@@ -11,36 +11,36 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "winter_night": {
-        "name": "Winter Night",
+    "frosty_winterland": {
+        "name": "Frosty Winterland",
         "acquirable": True,
         "available": True,
         "categories": ["Seasonal"],
         "exclude_from_all_backgrounds": False
     },
-    "volcano": {
+    "raging_volcano": {
         "name": "Raging Volcano",
         "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "city": {
-        "name": "City",
+    "city_life": {
+        "name": "That City Life",
         "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "forest": {
-        "name": "Forest",
+    "breezy_meadows": {
+        "name": "Breezy Meadows",
         "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "merch": {
-        "name": "Merch",
+    "merch_storm": {
+        "name": "Merch Storm",
         "acquirable": False,
         "available": True,
         "merch": True,
@@ -48,15 +48,15 @@ IMAGE_CONFIG = {
         "exclude_from_all_backgrounds": False,
         "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background."
     },
-    "retro": {
-        "name": "Retro",
+    "retro_gaming": {
+        "name": "Retro Gaming",
         "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "underwater": {
-        "name": "Underwater",
+    "deep_seas": {
+        "name": "Deep Seas",
         "acquirable": True,
         "available": True,
         "categories": [],
@@ -66,7 +66,7 @@ IMAGE_CONFIG = {
 
     # FREE BACKGROUNDS
     "free_purple": {
-        "name": "Purple Bloxlink",
+        "name": "Purple Bloxlink Buddy",
         "acquirable": False,
         "available": True,
         "free": True,
