@@ -11,7 +11,7 @@ class Route:
         pass
 
     async def handler(self, request):
-        color = request.args.get("color")
+        color = f"#{request.args.get('color')}"
 
         with Image.open(f"./assets/props/free_card.png") as prop_image:
             with Image.new("RGB", (prop_image.width, prop_image.height), ImageColor.getrgb(color)) as image:
