@@ -11,7 +11,7 @@ class TextWrapper(object):
         self.text_lines = [
             ' '.join([w.strip() for w in l.split(' ') if w])
             for l in text.split('\n')
-            if l
+            if l and l != "\n"
         ]
         self.font = font
         self.max_width = max_width
@@ -53,6 +53,9 @@ class TextWrapper(object):
                 else:
                     # word doesn't fit in line
                     wrapped_lines.append(' '.join(buf))
+                    print(word)
+                    print(self.max_width, word_width)
+                    word = word[:28]
                     buf = [word]
                     buf_width = word_width
 
