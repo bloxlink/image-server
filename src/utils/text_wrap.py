@@ -34,7 +34,7 @@ class TextWrapper(object):
             font=self.font
         )[0]
 
-    def wrapped_text(self):
+    def wrapped_text1(self):
         wrapped_lines = []
         buf = []
         buf_width = 0
@@ -46,6 +46,8 @@ class TextWrapper(object):
                 expected_width = word_width if not buf else \
                     buf_width + self.space_width + word_width
 
+                # print(expected_width, self.max_width)
+
                 if expected_width <= self.max_width:
                     # word fits in line
                     buf_width = expected_width
@@ -53,8 +55,6 @@ class TextWrapper(object):
                 else:
                     # word doesn't fit in line
                     wrapped_lines.append(' '.join(buf))
-                    print(word)
-                    print(self.max_width, word_width)
                     word = word[:28]
                     buf = [word]
                     buf_width = word_width
@@ -65,3 +65,39 @@ class TextWrapper(object):
                 buf_width = 0
 
         return '\n'.join(wrapped_lines)
+
+    def wrapped_text2(self):
+        wrapped_lines = []
+
+
+        expected_width = 0
+        current_line = []
+
+        for line in self.text_lines:
+            for word in line.split(' '):
+
+                for char in word:
+                    char_width = self.get_text_width(char)
+
+                    if not expected_width:
+                        expected_width = char_width
+
+                    # print(expected_width, current_line)
+
+                    if expected_width <= self.max_width:
+                        current_line.append(char)
+                        expected_width += char_width
+                    else:
+                        wrapped_lines.append("".join(current_line))
+                        current_line = []
+                        expected_width = 0
+
+                current_line.append(" ")
+                expected_width += self.space_width
+
+
+
+
+
+
+        return "\n".join(wrapped_lines)

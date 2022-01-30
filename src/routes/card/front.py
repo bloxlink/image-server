@@ -5,6 +5,7 @@ from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.text_cleanse import cleanse
 import aiohttp
+import time
 
 
 class Route:
@@ -130,7 +131,7 @@ class Route:
             if roblox_age:
                 draw.text(
                     (10, roblox_id_age_offset),
-                    f"Created {roblox_age}",
+                    f"Minted {roblox_age}",
                     (240, 191, 60),
                     font=self.header5
                 )
@@ -150,7 +151,29 @@ class Route:
                     description = f"{description[:230]}..."
 
                 wrapper = TextWrapper(description, self.header4, image.width-70)
-                wrapped_text = wrapper.wrapped_text()
+
+
+                # avg_1 = []
+                # for i in range(1000):
+                #     start = time.time()
+                #     wrapped_text = wrapper.wrapped_text1()
+                #     end = time.time()
+                #     time_delta = end-start
+                #     avg_1.append(time_delta)
+
+                # print(sum(avg_1)/len(avg_1))
+
+                # avg_2 = []
+                # for i in range(1000):
+                #     start = time.time()
+                #     wrapped_text = wrapper.wrapped_text2()
+                #     end = time.time()
+                #     time_delta = end-start
+                #     avg_2.append(time_delta)
+
+                # print(sum(avg_2)/len(avg_2))
+
+                wrapped_text = wrapper.wrapped_text2()
 
                 draw.text(
                     (40, 505),

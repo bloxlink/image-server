@@ -4,12 +4,17 @@ from constants import SERVER_HOST, SERVER_PORT
 import importlib
 import logging
 
-try:
-    from os import sched_getaffinity
-    cpu_count = len(sched_getaffinity(0))
-except ImportError:
-    from multiprocessing import cpu_count
-    cpu_count = cpu_count()
+DEBUG_MODE = os.getenv("PROD") != "TRUE"
+
+if DEBUG_MODE:
+    cpu_count = 1
+else:
+    try:
+        from os import sched_getaffinity
+        cpu_count = len(sched_getaffinity(0))
+    except ImportError:
+        from multiprocessing import cpu_count
+        cpu_count = cpu_count()
 
 
 logging.basicConfig()
@@ -44,4 +49,4 @@ if __name__ == '__main__':
 
 
     register_routes()
-    app.run(SERVER_HOST, SERVER_PORT, workers=cpu_count)
+    app.run(SERVER_HOST, SERVER_PORT, workers=cpu_count, debug=DEBUG_MODE)
