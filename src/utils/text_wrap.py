@@ -28,6 +28,11 @@ class TextWrapper(object):
             font=self.font
         )[0]
 
+        self.dash_width = self.draw.textsize(
+            text='-',
+            font=self.font
+        )[0]
+
     def get_text_width(self, text):
         return self.draw.textsize(
             text=text,
@@ -68,8 +73,6 @@ class TextWrapper(object):
 
     def wrapped_text2(self):
         wrapped_lines = []
-
-
         expected_width = 0
         current_line = []
 
@@ -82,22 +85,24 @@ class TextWrapper(object):
                     if not expected_width:
                         expected_width = char_width
 
-                    # print(expected_width, current_line)
-
-                    if expected_width <= self.max_width:
+                    if expected_width + self.dash_width <= self.max_width:
                         current_line.append(char)
                         expected_width += char_width
                     else:
+                        current_line.append("-")
                         wrapped_lines.append("".join(current_line))
-                        current_line = []
+                        current_line = [char]
                         expected_width = 0
 
                 current_line.append(" ")
                 expected_width += self.space_width
 
+            wrapped_lines.append("".join(current_line))
+            current_line = []
+            expected_width = 0
 
 
-
+        # TODO: check for non-empty buffer
 
 
         return "\n".join(wrapped_lines)
