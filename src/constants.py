@@ -4,19 +4,21 @@ DEFAULT_BACKGROUND = "free_purple"
 
 
 IMAGE_CONFIG = {
-    "starry_night": {
-        "name": "Starry Night",
-        "acquirable": True,
-        "available": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False
-    },
     "frosty_winterland": {
         "name": "Frosty Winterland",
         "acquirable": True,
         "available": True,
         "categories": ["Seasonal"],
         "exclude_from_all_backgrounds": False
+    },
+    "merch_storm": {
+        "name": "Merch Storm",
+        "acquirable": False,
+        "available": True,
+        "merch": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False,
+        "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background."
     },
     "raging_volcano": {
         "name": "Raging Volcano",
@@ -32,24 +34,15 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "breezy_meadows": {
-        "name": "Breezy Meadows",
+    "starry_night": {
+        "name": "Starry Night",
         "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "merch_storm": {
-        "name": "Merch Storm",
-        "acquirable": False,
-        "available": True,
-        "merch": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False,
-        "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background."
-    },
-    "retro_gaming": {
-        "name": "Retro Gaming",
+    "breezy_meadows": {
+        "name": "Breezy Meadows",
         "acquirable": True,
         "available": True,
         "categories": [],
@@ -62,7 +55,13 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-
+    "retro_gaming": {
+        "name": "Retro Gaming",
+        "acquirable": True,
+        "available": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False
+    },
 
     # FREE BACKGROUNDS
     "free_purple": {
