@@ -2,6 +2,8 @@ from PIL import Image, ImageDraw
 
 class TextWrapper(object):
     # https://stackoverflow.com/questions/7698231/python-pil-draw-multiline-text-on-image
+    # Algorithm modified by Julien Kmec
+
     """ Helper class to wrap text in lines, based on given text, font
         and max allowed line width.
     """
@@ -39,39 +41,7 @@ class TextWrapper(object):
             font=self.font
         )[0]
 
-    def wrapped_text1(self):
-        wrapped_lines = []
-        buf = []
-        buf_width = 0
-
-        for line in self.text_lines:
-            for word in line.split(' '):
-                word_width = self.get_text_width(word)
-
-                expected_width = word_width if not buf else \
-                    buf_width + self.space_width + word_width
-
-                # print(expected_width, self.max_width)
-
-                if expected_width <= self.max_width:
-                    # word fits in line
-                    buf_width = expected_width
-                    buf.append(word)
-                else:
-                    # word doesn't fit in line
-                    wrapped_lines.append(' '.join(buf))
-                    word = word[:28]
-                    buf = [word]
-                    buf_width = word_width
-
-            if buf:
-                wrapped_lines.append(' '.join(buf))
-                buf = []
-                buf_width = 0
-
-        return '\n'.join(wrapped_lines)
-
-    def wrapped_text2(self):
+    def wrapped_text(self):
         wrapped_lines = []
         expected_width = 0
         current_line = []
@@ -101,8 +71,12 @@ class TextWrapper(object):
             current_line = []
             expected_width = 0
 
+        if current_line:
+            wrapped_lines.append("".join(current_line))
 
-        # TODO: check for non-empty buffer
+        if len(wrapped_lines) > 8:
+            wrapped_lines[7] = wrapped_lines[7][:-3] + "..."
 
+        wrapped_lines = wrapped_lines[:8]
 
         return "\n".join(wrapped_lines)

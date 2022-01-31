@@ -5,7 +5,6 @@ from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.text_cleanse import cleanse
 import aiohttp
-import time
 
 
 class Route:
@@ -152,7 +151,7 @@ class Route:
 
                 wrapper = TextWrapper(description, self.header4, image.width-70)
 
-
+                # import time
                 # avg_1 = []
                 # for i in range(1000):
                 #     start = time.time()
@@ -173,7 +172,7 @@ class Route:
 
                 # print(sum(avg_2)/len(avg_2))
 
-                wrapped_text = wrapper.wrapped_text2()
+                wrapped_text = wrapper.wrapped_text()
 
                 draw.text(
                     (40, 505),
