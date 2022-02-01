@@ -20,6 +20,13 @@ IMAGE_CONFIG = {
         "exclude_from_all_backgrounds": False,
         "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background."
     },
+    "rainy_day": {
+        "name": "Rainy Day",
+        "acquirable": False,
+        "available": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False,
+    },
     "raging_volcano": {
         "name": "Raging Volcano",
         "acquirable": True,
