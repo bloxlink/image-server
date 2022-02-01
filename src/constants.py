@@ -41,6 +41,13 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
+    "sweet_tooth": {
+        "name": "Sweet Tooth",
+        "acquirable": True,
+        "available": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False
+    },
     "starry_night": {
         "name": "Starry Night",
         "acquirable": True,
