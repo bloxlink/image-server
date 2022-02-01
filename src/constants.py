@@ -72,5 +72,21 @@ IMAGE_CONFIG = {
         "categories": ["Free Backgrounds"],
         "exclude_from_all_backgrounds": True
     },
+    "free_orange": {
+        "name": "Orange Bloxlink Buddy",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": True
+    },
+    "free_red": {
+        "name": "Red Bloxlink Buddy",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": True
+    },
 }
 
