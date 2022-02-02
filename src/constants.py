@@ -102,5 +102,16 @@ IMAGE_CONFIG = {
         "categories": ["Free Backgrounds"],
         "exclude_from_all_backgrounds": True
     },
+
+
+    # SPECIALS
+    "black": {
+        "name": "Banned",
+        "acquirable": False,
+        "available": False,
+        "free": False,
+        "categories": [],
+        "exclude_from_all_backgrounds": True
+    },
 }
 

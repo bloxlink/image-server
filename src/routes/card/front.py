@@ -22,13 +22,17 @@ class Route:
 
     async def handler(self, request):
         background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
+        banned       = request.args.get("banned") == "true"
         username     = request.args.get("username")
-        display_name = request.args.get("display_name")
-        description  = request.args.get("description")
+        display_name = request.args.get("display_name") if not banned else ""
+        description  = request.args.get("description") or "No description available."
         headshot     = request.args.get("headshot")
         overlay      = request.args.get("overlay")
         roblox_id    = request.args.get("id")
         roblox_age   = request.args.get("age")
+
+        if banned:
+            background = "black"
 
         background_path = IMAGE_CONFIG.get(background)["front"]
 
@@ -178,6 +182,15 @@ class Route:
                     (40, 505),
                     wrapped_text,
                     (255, 255, 255),
+                    font=self.header5
+                )
+
+            if banned:
+                width_banned = draw.textsize("This user is banned.", font=self.header4)[0]
+                draw.text(
+                    ((image.size[0]-width_banned) / 2, 400),
+                    "This user is banned.",
+                    (255, 0, 0),
                     font=self.header4
                 )
 
