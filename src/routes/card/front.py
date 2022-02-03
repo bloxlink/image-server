@@ -182,7 +182,7 @@ class Route:
                     (40, 505),
                     wrapped_text,
                     (255, 255, 255),
-                    font=self.header5
+                    font=self.header4
                 )
 
             if banned:
