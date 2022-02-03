@@ -1,9 +1,51 @@
 SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8000
-DEFAULT_BACKGROUND = "free_purple"
+DEFAULT_BACKGROUND = "breezy_meadows"
 
 
 IMAGE_CONFIG = {
+    # FREE BACKGROUNDS
+    "breezy_meadows": {
+        "name": "Breezy Meadows",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": False
+    },
+    "deep_seas": {
+        "name": "Deep Seas",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": False
+    },
+    "free_purple": {
+        "name": "Purple Bloxlink Buddy",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": True
+    },
+    "free_orange": {
+        "name": "Orange Bloxlink Buddy",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": True
+    },
+    "free_red": {
+        "name": "Red Bloxlink Buddy",
+        "acquirable": False,
+        "available": True,
+        "free": True,
+        "categories": ["Free Backgrounds"],
+        "exclude_from_all_backgrounds": True
+    },
+
     "frosty_winterland": {
         "name": "Frosty Winterland",
         "acquirable": True,
@@ -55,20 +97,6 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-    "breezy_meadows": {
-        "name": "Breezy Meadows",
-        "acquirable": True,
-        "available": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False
-    },
-    "deep_seas": {
-        "name": "Deep Seas",
-        "acquirable": True,
-        "available": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False
-    },
     "retro_gaming": {
         "name": "Retro Gaming",
         "acquirable": True,
@@ -76,34 +104,6 @@ IMAGE_CONFIG = {
         "categories": [],
         "exclude_from_all_backgrounds": False
     },
-
-    # FREE BACKGROUNDS
-    "free_purple": {
-        "name": "Purple Bloxlink Buddy",
-        "acquirable": False,
-        "available": True,
-        "free": True,
-        "categories": ["Free Backgrounds"],
-        "exclude_from_all_backgrounds": True
-    },
-    "free_orange": {
-        "name": "Orange Bloxlink Buddy",
-        "acquirable": False,
-        "available": True,
-        "free": True,
-        "categories": ["Free Backgrounds"],
-        "exclude_from_all_backgrounds": True
-    },
-    "free_red": {
-        "name": "Red Bloxlink Buddy",
-        "acquirable": False,
-        "available": True,
-        "free": True,
-        "categories": ["Free Backgrounds"],
-        "exclude_from_all_backgrounds": True
-    },
-
-
     # SPECIALS
     "black": {
         "name": "Banned",
