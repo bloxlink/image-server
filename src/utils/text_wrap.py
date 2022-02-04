@@ -49,13 +49,15 @@ class TextWrapper(object):
         for line in self.text_lines:
             for word in line.split(' '):
 
-                for char in word:
+                for i, char in enumerate(word):
                     char_width = self.get_text_width(char)
 
                     if not expected_width:
                         expected_width = char_width
 
-                    if expected_width + self.dash_width <= self.max_width:
+                    dash_width = self.dash_width if i != len(word) - 1 else 0
+
+                    if expected_width + dash_width <= self.max_width:
                         current_line.append(char)
                         expected_width += char_width
                     else:
@@ -74,8 +76,8 @@ class TextWrapper(object):
         if current_line:
             wrapped_lines.append("".join(current_line))
 
-        if len(wrapped_lines) > 8:
-            wrapped_lines[7] = wrapped_lines[7][:-3] + "..."
+        if len(wrapped_lines) > 10:
+            wrapped_lines[9] = wrapped_lines[9][:-3] + "..."
 
         wrapped_lines = wrapped_lines[:8]
 

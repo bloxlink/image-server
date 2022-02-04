@@ -25,7 +25,7 @@ class Route:
         banned       = request.args.get("banned") == "true"
         username     = request.args.get("username")
         display_name = request.args.get("display_name") if not banned else ""
-        description  = request.args.get("description") or "No description available."
+        description  = cleanse(request.args.get("description", "")) or "No description available."
         headshot     = request.args.get("headshot")
         overlay      = request.args.get("overlay")
         roblox_id    = request.args.get("id")
@@ -148,12 +148,10 @@ class Route:
                 )
 
             if description:
-                description = cleanse(description)
+                if len(description) > 500:
+                    description = f"{description[:500]}..."
 
-                if len(description) > 230:
-                    description = f"{description[:230]}..."
-
-                wrapper = TextWrapper(description, self.header4, image.width-70)
+                wrapper = TextWrapper(description, self.header5, image.width-70)
 
                 # import time
                 # avg_1 = []
@@ -182,7 +180,7 @@ class Route:
                     (40, 505),
                     wrapped_text,
                     (255, 255, 255),
-                    font=self.header4
+                    font=self.header5
                 )
 
             if banned:
