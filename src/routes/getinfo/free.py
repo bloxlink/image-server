@@ -4,7 +4,7 @@ from io import BytesIO
 
 
 class Route:
-    PATH = "/card/free"
+    PATH = "/getinfo/free"
     METHODS = ("GET", )
 
     def __init__(self):

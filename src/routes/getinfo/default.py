@@ -1,9 +1,9 @@
 from sanic.response import text
-from constants import DEFAULT_BACKGROUND
+from config import DEFAULT_BACKGROUND
 
 
 class Route:
-    PATH = "/card/default"
+    PATH = "/getinfo/default"
     METHODS = ("GET", )
 
     def __init__(self):

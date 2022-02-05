@@ -1,14 +1,15 @@
 from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
+from config import DEFAULT_BACKGROUND
+from IMAGES import IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.text_cleanse import cleanse
 import aiohttp
 
 
 class Route:
-    PATH = "/card/front"
+    PATH = "/getinfo/front"
     METHODS = ("GET", )
 
     def __init__(self):
@@ -34,7 +35,7 @@ class Route:
         if banned:
             background = "black"
 
-        background_path = IMAGE_CONFIG.get(background)["front"]
+        background_path = IMAGE_CONFIG.get(background)["paths"]["getinfo"]["front"]
 
         # image storage for closing
         headshot_image = None

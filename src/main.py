@@ -1,6 +1,6 @@
 from sanic import Sanic
 import os
-from constants import SERVER_HOST, SERVER_PORT
+from config import SERVER_HOST, SERVER_PORT
 import importlib
 import logging
 

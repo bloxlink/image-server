@@ -2,11 +2,12 @@ from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 from utils.text_cleanse import cleanse
-from constants import DEFAULT_BACKGROUND, IMAGE_CONFIG
+from config import DEFAULT_BACKGROUND
+from IMAGES import IMAGE_CONFIG
 
 
 class Route:
-    PATH = "/card/back"
+    PATH = "/getinfo/back"
     METHODS = ("GET", )
 
     def __init__(self):
@@ -25,7 +26,7 @@ class Route:
         if banned:
             background = "black"
 
-        background_path = IMAGE_CONFIG.get(background)["back"]
+        background_path = IMAGE_CONFIG.get(background)["paths"]["getinfo"]["back"]
 
         first_font_size = self.header1
         second_font_size = self.header2
