@@ -77,46 +77,16 @@ IMAGE_CONFIG = {
     },
 
     "frosty_winterland": {
-        "name": "Frosty Winterland",
+        "name": "Frosty Winterland - LIMITED TIME FOR SALE",
         "acquirable": True,
         "available": True,
-        "categories": ["Seasonal"],
+        "categories": ["Limited Time"],
         "exclude_from_all_backgrounds": False,
         "paths": {
             "getinfo": {
                 "whole": "assets/backgrounds/getinfo/whole/frosty_winterland.png",
                 "front": "assets/backgrounds/getinfo/front/frosty_winterland.png",
                 "back": "assets/backgrounds/getinfo/back/frosty_winterland.png"
-            }
-        }
-    },
-    "merch_storm": {
-        "name": "Merch Storm",
-        "acquirable": False,
-        "available": True,
-        "merch": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False,
-        "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background.",
-        "paths": {
-            "getinfo": {
-                "whole": "assets/backgrounds/getinfo/whole/merch_storm.png",
-                "front": "assets/backgrounds/getinfo/front/merch_storm.png",
-                "back": "assets/backgrounds/getinfo/back/merch_storm.png"
-            }
-        }
-    },
-    "rainy_day": {
-        "name": "Rainy Day",
-        "acquirable": False,
-        "available": True,
-        "categories": [],
-        "exclude_from_all_backgrounds": False,
-        "paths": {
-            "getinfo": {
-                "whole": "assets/backgrounds/getinfo/whole/rainy_day.png",
-                "front": "assets/backgrounds/getinfo/front/rainy_day.png",
-                "back": "assets/backgrounds/getinfo/back/rainy_day.png"
             }
         }
     },
@@ -145,6 +115,36 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/city_life.png",
                 "front": "assets/backgrounds/getinfo/front/city_life.png",
                 "back": "assets/backgrounds/getinfo/back/city_life.png"
+            }
+        }
+    },
+    "rainy_day": {
+        "name": "Rainy Day",
+        "acquirable": False,
+        "available": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False,
+        "paths": {
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/rainy_day.png",
+                "front": "assets/backgrounds/getinfo/front/rainy_day.png",
+                "back": "assets/backgrounds/getinfo/back/rainy_day.png"
+            }
+        }
+    },
+    "merch_storm": {
+        "name": "Merch Storm",
+        "acquirable": False,
+        "available": True,
+        "merch": True,
+        "categories": [],
+        "exclude_from_all_backgrounds": False,
+        "on_buy_message": "This background can be acquired by purchasing any of our [hoodies](<https://shop.blox.link/collections/hoodies>)! You will get a special code that will unlock this background.",
+        "paths": {
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/merch_storm.png",
+                "front": "assets/backgrounds/getinfo/front/merch_storm.png",
+                "back": "assets/backgrounds/getinfo/back/merch_storm.png"
             }
         }
     },
