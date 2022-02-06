@@ -206,5 +206,20 @@ IMAGE_CONFIG = {
             }
         }
     },
+
+    "blank_test": {
+        "name": "Test",
+        "acquirable": False,
+        "available": True,
+        "free": False,
+        "categories": [],
+        "exclude_from_all_backgrounds": False,
+        "paths": {
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/blank_test.png",
+                "front": "assets/backgrounds/verify/front/blank_test.png",
+            }
+        }
+    },
 }
 
