@@ -1,5 +1,5 @@
 from sanic.response import text
-from config import DEFAULT_BACKGROUND
+from config import DEFAULT_GETINFO_BACKGROUND, DEFAULT_VERIFY_BACKGROUND
 
 
 class Route:
@@ -10,4 +10,9 @@ class Route:
         pass
 
     async def handler(self, request):
-        return text(DEFAULT_BACKGROUND)
+        type = request.args.get("type")
+
+        if type == "getinfo":
+            return text(DEFAULT_GETINFO_BACKGROUND)
+        elif type == "verify":
+            return text(DEFAULT_VERIFY_BACKGROUND)

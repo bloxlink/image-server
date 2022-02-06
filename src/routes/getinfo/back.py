@@ -2,7 +2,7 @@ from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 from utils.text_cleanse import cleanse
-from config import DEFAULT_BACKGROUND
+from config import DEFAULT_GETINFO_BACKGROUND
 from IMAGES import IMAGE_CONFIG
 
 
@@ -17,7 +17,9 @@ class Route:
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
     async def handler(self, request):
-        background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
+        background   = request.args.get("background")
+        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
+
         banned       = request.args.get("banned") == "true"
         username     = request.args.get("username")
         display_name = request.args.get("display_name")

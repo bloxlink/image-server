@@ -1,10 +1,8 @@
 from sanic.response import raw
 from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
-from config import DEFAULT_BACKGROUND
+from config import DEFAULT_VERIFY_BACKGROUND
 from IMAGES import IMAGE_CONFIG
-from utils.text_wrap import TextWrapper
-from utils.text_cleanse import cleanse
 import aiohttp
 
 
@@ -22,12 +20,14 @@ class Route:
         self.session = None
 
     async def handler(self, request):
-        background   = request.args.get("background") if request.args.get("background") != "null" else DEFAULT_BACKGROUND
+        background   = request.args.get("background")
+        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("verify", {}).get("front") else DEFAULT_VERIFY_BACKGROUND
+
         username     = request.args.get("username")
         display_name = request.args.get("display_name")
         headshot     = request.args.get("headshot")
 
-        background_path = IMAGE_CONFIG.get(background)["verify"]["front"]
+        background_path = IMAGE_CONFIG.get(background, {}).get("verify", {}).get("front")
 
         # image storage for closing
         headshot_image = None
