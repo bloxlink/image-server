@@ -18,7 +18,7 @@ class Route:
 
     async def handler(self, request):
         background   = request.args.get("background")
-        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
+        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("back") else DEFAULT_GETINFO_BACKGROUND
 
         banned       = request.args.get("banned") == "true"
         username     = request.args.get("username")
