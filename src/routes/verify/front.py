@@ -27,7 +27,7 @@ class Route:
         display_name = request.args.get("display_name")
         headshot     = request.args.get("headshot")
 
-        background_path = IMAGE_CONFIG.get(background)["getinfo"]["front"]
+        background_path = IMAGE_CONFIG.get(background)["verify"]["front"]
 
         # image storage for closing
         headshot_image = None
