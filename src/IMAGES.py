@@ -13,6 +13,9 @@ IMAGE_CONFIG = {
                 "front": "assets/backgrounds/getinfo/front/breezy_meadows.png",
                 "back": "assets/backgrounds/getinfo/back/breezy_meadows.png"
             }
+        },
+        "hexes": {
+            "primary_color": (193, 93, 93)
         }
     },
     "deep_seas": {
