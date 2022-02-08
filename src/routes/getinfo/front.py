@@ -82,7 +82,7 @@ class Route:
                     moon_outline = background_props.get("moon_outline", "moon_outline.png")
 
                     with Image.open(f"./assets/props/{moon_prop}") as moon_image:
-                        with Image.open("./assets/props/moon_outline.png") as moon_outline_image:
+                        with Image.open(f"./assets/props/{moon_outline or 'moon_outline.png'}") as moon_outline_image:
                             headshot_buffer = BytesIO(await resp.read())
 
                             headshot_image  = Image.open(headshot_buffer)
@@ -92,6 +92,7 @@ class Route:
                                 image.paste(moon_image, (0, 0), moon_image)
 
                             image.paste(headshot_image, (160, 70), headshot_image)
+                            # image.paste(headshot_image, (160, 140), headshot_image)
                             image.paste(background_image, (0, 0), background_image)
 
                             if moon_outline:
