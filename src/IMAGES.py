@@ -78,7 +78,30 @@ IMAGE_CONFIG = {
             }
         }
     },
-
+    "cupid_valentine": {
+        "name": "Cupid's Valentine - LIMITED TIME FOR SALE",
+        "acquirable": True,
+        "available": True,
+        "categories": ["Limited Time"],
+        "exclude_from_all_backgrounds": False,
+        "paths": {
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/cupid_valentine.png",
+                "front": "assets/backgrounds/getinfo/front/cupid_valentine.png",
+                "back": "assets/backgrounds/getinfo/back/cupid_valentine.png"
+            }
+        },
+        "props": (
+            "heart.png",
+            ("HEADSHOT", (160, 100)),
+            "BACKGROUND",
+            "wings.png",
+            "heart_outline.png"
+        ),
+        "hexes": {
+            "primary_color": (139, 60, 240)
+        }
+    },
     "frosty_winterland": {
         "name": "Frosty Winterland - LIMITED TIME FOR SALE",
         "acquirable": True,
@@ -93,27 +116,6 @@ IMAGE_CONFIG = {
             }
         }
     },
-    # "cupid_valentine": {
-    #     "name": "Cupid's Valentine - LIMITED TIME FOR SALE",
-    #     "acquirable": True,
-    #     "available": True,
-    #     "categories": ["Limited Time"],
-    #     "exclude_from_all_backgrounds": False,
-    #     "paths": {
-    #         "getinfo": {
-    #             "whole": "assets/backgrounds/getinfo/whole/cupid_valentine.png",
-    #             "front": "assets/backgrounds/getinfo/front/cupid_valentine.png",
-    #             "back": "assets/backgrounds/getinfo/back/cupid_valentine.png"
-    #         }
-    #     },
-    #     "props": {
-    #         "moon": "heart.png",
-    #         "moon_outline": "heart_outline.png"
-    #     },
-    #     "hexes": {
-    #         "primary_color": (139, 60, 240)
-    #     }
-    # },
     "raging_volcano": {
         "name": "Raging Volcano",
         "acquirable": True,
@@ -127,10 +129,12 @@ IMAGE_CONFIG = {
                 "back": "assets/backgrounds/getinfo/back/raging_volcano.png"
             }
         },
-        "props": {
-            "moon": "volcano_rock.png",
-            "moon_outline": None
-        },
+        "props": (
+            "volcano_rock.png",
+            "HEADSHOT",
+            "BACKGROUND",
+
+        ),
         "hexes": {
             "primary_color": (203, 185, 179)
         }
