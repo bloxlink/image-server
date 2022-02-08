@@ -39,7 +39,7 @@ class Route:
 
         background_config = IMAGE_CONFIG[background]
         background_path = background_config["paths"]["getinfo"]["front"]
-        background_props = background_config.get("props", {})
+        background_props = background_config.get("props", ("moon.png", "HEADSHOT", "BACKGROUND", "moon_outline.png"))
         background_hexes = background_config.get("hexes", {})
 
         primary_color = background_hexes.get("primary_color", (240, 191, 60))
@@ -71,33 +71,31 @@ class Route:
             adjusted_name_pos_1 = 320
             adjusted_name_pos_2 = 370
 
-        # TODO: if bg is deleted, then revert to default
 
         with Image.open(background_path) as background_image:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
-            if headshot:
-                async with self.session.get(headshot) as resp:
-                    moon_prop = background_props.get("moon", "moon.png")
-                    moon_outline = background_props.get("moon_outline", "moon_outline.png")
+            for prop in background_props:
+                if isinstance(prop, tuple):
+                    prop_name = prop[0]
+                    prop_dim = prop[1]
+                else:
+                    prop_name = prop
+                    prop_dim = (160, 70) if prop_name == "HEADSHOT" else (0, 0)
 
-                    with Image.open(f"./assets/props/{moon_prop}") as moon_image:
-                        with Image.open(f"./assets/props/{moon_outline or 'moon_outline.png'}") as moon_outline_image:
+                if prop_name == "BACKGROUND":
+                    image.paste(background_image, prop_dim, background_image)
+                elif prop_name == "HEADSHOT":
+                    if headshot:
+                        async with self.session.get(headshot) as resp:
                             headshot_buffer = BytesIO(await resp.read())
 
                             headshot_image  = Image.open(headshot_buffer)
                             headshot_image  = headshot_image.resize((220, 220))
-
-                            if moon_prop:
-                                image.paste(moon_image, (0, 0), moon_image)
-
-                            image.paste(headshot_image, (160, 70), headshot_image)
-                            # image.paste(headshot_image, (160, 140), headshot_image)
-                            image.paste(background_image, (0, 0), background_image)
-
-                            if moon_outline:
-                                image.paste(moon_outline_image, (0, 0), moon_outline_image)
-
+                            image.paste(headshot_image, prop_dim, headshot_image)
+                else:
+                    with Image.open(f"./assets/props/{prop_name}") as prop_image:
+                        image.paste(prop_image, prop_dim, prop_image)
 
             if overlay:
                 with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
