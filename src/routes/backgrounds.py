@@ -1,6 +1,5 @@
 from sanic.response import json
 from IMAGES import IMAGE_CONFIG
-import os
 
 
 

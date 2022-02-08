@@ -102,6 +102,13 @@ IMAGE_CONFIG = {
                 "front": "assets/backgrounds/getinfo/front/raging_volcano.png",
                 "back": "assets/backgrounds/getinfo/back/raging_volcano.png"
             }
+        },
+        "props": {
+            "moon": "volcano_rock.png",
+            "moon_outline": None
+        },
+        "hexes": {
+            "primary_color": (203, 185, 179)
         }
     },
     "city_life": {

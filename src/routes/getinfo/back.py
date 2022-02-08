@@ -28,7 +28,12 @@ class Route:
         if banned:
             background = "black"
 
-        background_path = IMAGE_CONFIG.get(background)["paths"]["getinfo"]["back"]
+        background_config = IMAGE_CONFIG[background]
+        background_path = background_config["paths"]["getinfo"]["back"]
+        background_props = background_config.get("props", {})
+        background_hexes = background_config.get("hexes", {})
+
+        primary_color = background_hexes.get("primary_color", (240, 191, 60))
 
         first_font_size = self.header1
         second_font_size = self.header2
@@ -77,7 +82,7 @@ class Route:
                         draw.text(
                             ((image.size[0]-width_display_name) / 2, adjusted_name_pos_1),
                             display_name,
-                            (240, 191, 60),
+                            primary_color,
                             font=first_font_size)
 
                         width_username = draw.textsize(username, font=second_font_size)[0]

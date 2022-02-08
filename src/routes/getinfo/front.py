@@ -37,7 +37,12 @@ class Route:
         if banned:
             background = "black"
 
-        background_path = IMAGE_CONFIG.get(background)["paths"]["getinfo"]["front"]
+        background_config = IMAGE_CONFIG[background]
+        background_path = background_config["paths"]["getinfo"]["front"]
+        background_props = background_config.get("props", {})
+        background_hexes = background_config.get("hexes", {})
+
+        primary_color = background_hexes.get("primary_color", (240, 191, 60))
 
         # image storage for closing
         headshot_image = None
@@ -73,17 +78,24 @@ class Route:
 
             if headshot:
                 async with self.session.get(headshot) as resp:
-                    with Image.open("./assets/props/moon.png") as moon_image:
+                    moon_prop = background_props.get("moon", "moon.png")
+                    moon_outline = background_props.get("moon_outline", "moon_outline.png")
+
+                    with Image.open(f"./assets/props/{moon_prop}") as moon_image:
                         with Image.open("./assets/props/moon_outline.png") as moon_outline_image:
                             headshot_buffer = BytesIO(await resp.read())
+
                             headshot_image  = Image.open(headshot_buffer)
                             headshot_image  = headshot_image.resize((220, 220))
 
-                            image.paste(moon_image, (0, 0), moon_image)
-                            image.paste(headshot_image, (160, 70), headshot_image)
+                            if moon_prop:
+                                image.paste(moon_image, (0, 0), moon_image)
 
+                            image.paste(headshot_image, (160, 70), headshot_image)
                             image.paste(background_image, (0, 0), background_image)
-                            image.paste(moon_outline_image, (0, 0), moon_outline_image)
+
+                            if moon_outline:
+                                image.paste(moon_outline_image, (0, 0), moon_outline_image)
 
 
             if overlay:
@@ -112,7 +124,7 @@ class Route:
                         draw.text(
                             ((image.size[0]-width_display_name) / 2, adjusted_name_pos_1),
                             display_name,
-                            (240, 191, 60),
+                            primary_color,
                             font=first_font_size)
 
                         width_username = draw.textsize(username, font=second_font_size)[0]
@@ -138,7 +150,7 @@ class Route:
                 draw.text(
                     (10, roblox_id_age_offset),
                     f"Minted {roblox_age}",
-                    (240, 191, 60),
+                    primary_color,
                     font=self.header5
                 )
 
@@ -146,7 +158,7 @@ class Route:
                 draw.text(
                     (10, roblox_id_age_offset+25),
                     f"#{roblox_id}",
-                    (240, 191, 60),
+                    primary_color,
                     font=self.header5
                 )
 
