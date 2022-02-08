@@ -78,21 +78,6 @@ IMAGE_CONFIG = {
             }
         }
     },
-
-    "frosty_winterland": {
-        "name": "Frosty Winterland - LIMITED TIME FOR SALE",
-        "acquirable": True,
-        "available": True,
-        "categories": ["Limited Time"],
-        "exclude_from_all_backgrounds": False,
-        "paths": {
-            "getinfo": {
-                "whole": "assets/backgrounds/getinfo/whole/frosty_winterland.png",
-                "front": "assets/backgrounds/getinfo/front/frosty_winterland.png",
-                "back": "assets/backgrounds/getinfo/back/frosty_winterland.png"
-            }
-        }
-    },
     "cupid_valentine": {
         "name": "Cupid's Valentine - LIMITED TIME FOR SALE",
         "acquirable": True,
@@ -115,6 +100,20 @@ IMAGE_CONFIG = {
         ),
         "hexes": {
             "primary_color": (139, 60, 240)
+        }
+    },
+    "frosty_winterland": {
+        "name": "Frosty Winterland - LIMITED TIME FOR SALE",
+        "acquirable": True,
+        "available": True,
+        "categories": ["Limited Time"],
+        "exclude_from_all_backgrounds": False,
+        "paths": {
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/frosty_winterland.png",
+                "front": "assets/backgrounds/getinfo/front/frosty_winterland.png",
+                "back": "assets/backgrounds/getinfo/back/frosty_winterland.png"
+            }
         }
     },
     "raging_volcano": {
