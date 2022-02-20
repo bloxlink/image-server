@@ -17,13 +17,15 @@ class Route:
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
     async def handler(self, request):
-        background   = request.args.get("background")
-        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("back") else DEFAULT_GETINFO_BACKGROUND
+        json_data = request.json
+        background   = json_data.get("background")
+        background   = background if background and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("back") else DEFAULT_GETINFO_BACKGROUND
 
-        banned       = request.args.get("banned") == "true"
-        username     = request.args.get("username")
-        display_name = request.args.get("display_name")
-        group_ranks  = request.args.get("group_ranks")
+        banned          = json_data.get("banned") == "true"
+        username        = json_data.get("username")
+        display_name    = json_data.get("display_name")
+        group_ranks     =  json_data.get("group_ranks", {})
+        selected_ranks  = {k: group_ranks[k] for k in list(group_ranks)[:5]}
 
         if banned:
             background = "black"
@@ -102,12 +104,11 @@ class Route:
                         font=self.header1
                     )
 
-            if group_ranks:
-                groups = group_ranks.split("BLOXLINK_DELIM")[:5]
+            if selected_ranks:
                 group_name_pos = 265
                 group_rank_pos = 300
 
-                for group_name, group_rank in map(lambda x: cleanse(x).split("BLOXLINK_SEP"), groups):
+                for group_name, group_rank in selected_ranks.items():
                     draw.text(
                         (50, group_name_pos),
                         group_name,

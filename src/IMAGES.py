@@ -12,6 +12,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/breezy_meadows.png",
                 "front": "assets/backgrounds/getinfo/front/breezy_meadows.png",
                 "back": "assets/backgrounds/getinfo/back/breezy_meadows.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/breezy_meadows.png",
+                "front": "assets/backgrounds/verify/front/breezy_meadows.png",
             }
         },
         "hexes": {

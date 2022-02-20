@@ -22,17 +22,18 @@ class Route:
         self.session = None
 
     async def handler(self, request):
-        background   = request.args.get("background")
-        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
+        json_data = request.json
+        background   = json_data.get("background")
+        background   = background if background and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
 
-        banned       = request.args.get("banned") == "true"
-        username     = request.args.get("username")
-        display_name = request.args.get("display_name") if not banned else ""
-        description  = cleanse(request.args.get("description", "")) or "No description available."
-        headshot     = request.args.get("headshot")
-        overlay      = request.args.get("overlay")
-        roblox_id    = request.args.get("id")
-        roblox_age   = request.args.get("age")
+        banned       = bool(json_data.get("banned"))
+        username     = json_data.get("username")
+        display_name = json_data.get("display_name") if not banned else ""
+        description  = cleanse(json_data.get("description", "")) or "No description available."
+        headshot     = json_data.get("headshot")
+        overlay      = json_data.get("overlay")
+        roblox_id    = json_data.get("id")
+        roblox_age   = json_data.get("age")
 
         if banned:
             background = "black"
@@ -114,7 +115,7 @@ class Route:
                         draw.text(
                             ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                             username,
-                            (255, 255, 255),
+                            primary_color,
                             font=first_font_size
                         )
                     else:
@@ -139,7 +140,7 @@ class Route:
                     draw.text(
                         ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                         username,
-                        (255, 255, 255),
+                        primary_color,
                         font=first_font_size
                     )
 
