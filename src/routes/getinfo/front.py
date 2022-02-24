@@ -77,6 +77,9 @@ class Route:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
             for prop in background_props:
+                if isinstance(prop, dict):
+                    prop = prop["getinfo"]
+
                 if isinstance(prop, tuple):
                     prop_name = prop[0]
                     prop_dim = prop[1]
@@ -166,30 +169,8 @@ class Route:
                 if len(description) > 500:
                     description = f"{description[:500]}..."
 
-                wrapper = TextWrapper(description, self.header5, image.width-70)
-
-                # import time
-                # avg_1 = []
-                # for i in range(1000):
-                #     start = time.time()
-                #     wrapped_text = wrapper.wrapped_text1()
-                #     end = time.time()
-                #     time_delta = end-start
-                #     avg_1.append(time_delta)
-
-                # print(sum(avg_1)/len(avg_1))
-
-                # avg_2 = []
-                # for i in range(1000):
-                #     start = time.time()
-                #     wrapped_text = wrapper.wrapped_text2()
-                #     end = time.time()
-                #     time_delta = end-start
-                #     avg_2.append(time_delta)
-
-                # print(sum(avg_2)/len(avg_2))
-
-                wrapped_text = wrapper.wrapped_text()
+                wrapper = TextWrapper(description, self.header5, image.width-70, 10)
+                wrapped_text, _ = wrapper.wrapped_text()
 
                 draw.text(
                     (40, 505),

@@ -3,6 +3,7 @@ from PIL import Image, ImageFont, ImageDraw
 from io import BytesIO
 from config import DEFAULT_VERIFY_BACKGROUND
 from IMAGES import IMAGE_CONFIG
+from utils.text_wrap import TextWrapper
 import aiohttp
 
 
@@ -28,7 +29,7 @@ class Route:
         display_name = json_data.get("display_name")
         headshot     = json_data.get("headshot")
         nickname     = json_data.get("nickname")
-        roles        = json_data.get("roles")
+        roles        = json_data.get("roles") or {}
 
         background_config = IMAGE_CONFIG[background]
         background_path = background_config["paths"]["verify"]["front"]
@@ -68,6 +69,9 @@ class Route:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
             for prop in background_props:
+                if isinstance(prop, dict):
+                    prop = prop["verify"]
+
                 if isinstance(prop, tuple):
                     prop_name = prop[0]
                     prop_dim = prop[1]
@@ -135,22 +139,75 @@ class Route:
                         font=first_font_size
                     )
 
+            content_box_pos_y = 15
+
             if nickname:
                 draw.text(
-                    (440, 10),
+                    (440, content_box_pos_y),
                     "Nickname: ",
                     primary_color,
                     font=self.header2
                 )
 
+                width_nickname = draw.textsize(nickname, font=self.header4)[0]
+
+                if width_nickname <= 250:
+                    content_box_pos_y = 25
+
                 draw.text(
-                    (620, 10),
-                    f"{nickname}",
-                    primary_color,
+                    (620, content_box_pos_y+4),
+                    nickname,
+                    (255, 255, 255),
                     font=self.header4
                 )
 
+            if roles.get("added"):
+                content_box_pos_y += 35
 
+                draw.text(
+                    (440, content_box_pos_y),
+                    "Added Roles: ",
+                    primary_color,
+                    font=self.header2
+                )
+                roles_str = ", ".join(roles["added"])
+
+                wrapper = TextWrapper(roles_str, self.header5, 330, 5)
+                wrapped_text, lines_used = wrapper.wrapped_text()
+
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    wrapped_text,
+                    (255, 255, 255),
+                    font=self.header4
+                )
+
+                content_box_pos_y += 35 ** lines_used
+
+            if roles.get("removed"):
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    "Removed Roles: ",
+                    primary_color,
+                    font=self.header2
+                )
+                roles_str = ", ".join(roles["removed"])
+
+                wrapper = TextWrapper(roles_str, self.header5, 350, 5)
+                wrapped_text, _ = wrapper.wrapped_text()
+
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    wrapped_text,
+                    (255, 255, 255),
+                    font=self.header4
+                )
         try:
             with BytesIO() as bf:
                 image.save(bf, "PNG", quality=70)
