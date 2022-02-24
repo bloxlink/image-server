@@ -30,6 +30,8 @@ class Route:
         headshot     = json_data.get("headshot")
         nickname     = json_data.get("nickname")
         roles        = json_data.get("roles") or {}
+        errors       = json_data.get("errors") or []
+        warnings     = json_data.get("warnings") or []
 
         background_config = IMAGE_CONFIG[background]
         background_path = background_config["paths"]["verify"]["front"]
@@ -208,6 +210,57 @@ class Route:
                     (255, 255, 255),
                     font=self.header4
                 )
+
+                content_box_pos_y += 35 ** lines_used
+
+            if errors:
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    "Error(s): ",
+                    primary_color,
+                    font=self.header2
+                )
+                error_str = ", ".join(errors)
+
+                wrapper = TextWrapper(error_str, self.header5, 350, 10)
+                wrapped_text, lines_used = wrapper.wrapped_text()
+
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    wrapped_text,
+                    (255, 255, 255),
+                    font=self.header4
+                )
+
+                content_box_pos_y += 35 ** lines_used
+
+            if warnings:
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    "Warning(s): ",
+                    primary_color,
+                    font=self.header2
+                )
+                warning_str = ", ".join(warnings)
+
+                wrapper = TextWrapper(warning_str, self.header5, 350, 10)
+                wrapped_text, _ = wrapper.wrapped_text()
+
+                content_box_pos_y += 35
+
+                draw.text(
+                    (440, content_box_pos_y),
+                    wrapped_text,
+                    (255, 255, 255),
+                    font=self.header4
+                )
+
         try:
             with BytesIO() as bf:
                 image.save(bf, "PNG", quality=70)
