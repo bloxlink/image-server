@@ -28,7 +28,7 @@ class Route:
         username     = json_data.get("username")
         display_name = json_data.get("display_name")
         headshot     = json_data.get("headshot")
-        nickname     = json_data.get("nickname") + "aaaaaa"
+        nickname     = json_data.get("nickname")
         roles        = json_data.get("roles") or {}
         errors       = json_data.get("errors") or []
         warnings     = json_data.get("warnings") or []
