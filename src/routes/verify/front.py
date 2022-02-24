@@ -28,7 +28,7 @@ class Route:
         username     = json_data.get("username")
         display_name = json_data.get("display_name")
         headshot     = json_data.get("headshot")
-        nickname     = json_data.get("nickname")
+        nickname     = json_data.get("nickname") + "aaaaaa"
         roles        = json_data.get("roles") or {}
         errors       = json_data.get("errors") or []
         warnings     = json_data.get("warnings") or []
@@ -144,6 +144,8 @@ class Route:
             content_box_pos_y = 15
 
             if nickname:
+                nickname_extended = False
+
                 draw.text(
                     (440, content_box_pos_y),
                     "Nickname: ",
@@ -153,19 +155,20 @@ class Route:
 
                 width_nickname = draw.textsize(nickname, font=self.header4)[0]
 
-                if width_nickname <= 250:
-                    content_box_pos_y = 25
+                if width_nickname >= 250:
+                    content_box_pos_y = 50
+                    nickname_extended = True
 
                 draw.text(
-                    (620, content_box_pos_y+4),
+                    (620 if not nickname_extended else 440, content_box_pos_y+4),
                     nickname,
                     (255, 255, 255),
                     font=self.header4
                 )
 
-            if roles.get("added"):
                 content_box_pos_y += 35
 
+            if roles.get("added"):
                 draw.text(
                     (440, content_box_pos_y),
                     "Added Roles: ",
@@ -189,8 +192,6 @@ class Route:
                 content_box_pos_y += 35 ** lines_used
 
             if roles.get("removed"):
-                content_box_pos_y += 35
-
                 draw.text(
                     (440, content_box_pos_y),
                     "Removed Roles: ",
@@ -214,8 +215,6 @@ class Route:
                 content_box_pos_y += 35 ** lines_used
 
             if errors:
-                content_box_pos_y += 35
-
                 draw.text(
                     (440, content_box_pos_y),
                     "Error(s): ",
@@ -239,8 +238,6 @@ class Route:
                 content_box_pos_y += 35 ** lines_used
 
             if warnings:
-                content_box_pos_y += 35
-
                 draw.text(
                     (440, content_box_pos_y),
                     "Warning(s): ",
