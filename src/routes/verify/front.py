@@ -13,7 +13,8 @@ class Route:
 
     def __init__(self):
         self.header1 = ImageFont.truetype("fonts/TovariSans.ttf", 100)
-        self.header2 = ImageFont.truetype("fonts/TovariSans.ttf", 50)
+        self.header2 = ImageFont.truetype("fonts/TovariSans.ttf", 80)
+        self.header3 = ImageFont.truetype("fonts/TovariSans.ttf", 50)
        # self.header3 = ImageFont.truetype("fonts/cartoonist/TovariSans.ttf", 90)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
@@ -55,16 +56,22 @@ class Route:
         adjusted_name_pos_1 = 290
         adjusted_name_pos_2 = 370
 
-        if len(username) >= 20:
-            username = f"{username[:20]}..."
+        if len(username) >= 13:
+            username = f"{username[:13]}..."
 
-        if len(display_name) >= 20:
-            display_name = f"{display_name[:20]}..."
+        if len(display_name) >= 13:
+            display_name = f"{display_name[:13]}..."
 
-        if len(username) >= 10 or len(display_name) >= 10:
+        if len(username) >= 8 or len(display_name) >= 8:
+            first_font_size = self.header3
+            second_font_size = self.header3
+            adjusted_name_pos_1 = 320
+            adjusted_name_pos_2 = 370
+
+        elif len(username) >= 7 or len(display_name) >= 7:
             first_font_size = self.header2
             second_font_size = self.header2
-            adjusted_name_pos_1 = 320
+            adjusted_name_pos_1 = 300
             adjusted_name_pos_2 = 370
 
         with Image.open(background_path) as background_image:
@@ -110,7 +117,7 @@ class Route:
                         width_username = draw.textsize(username, font=first_font_size)[0]
 
                         draw.text(
-                            ((image.size[0]-width_username) * 0.160, adjusted_name_pos_1),
+                            ((image.size[0]-width_username) / 8, adjusted_name_pos_1),
                             username,
                             primary_color,
                             font=first_font_size
@@ -119,14 +126,14 @@ class Route:
                         # show both username and display name
                         width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
                         draw.text(
-                            ((image.size[0]-width_display_name) * 0.160, adjusted_name_pos_1),
+                            ((image.size[0]-width_display_name) / 8, adjusted_name_pos_1),
                             display_name,
                             primary_color,
                             font=first_font_size)
 
                         width_username = draw.textsize(username, font=second_font_size)[0]
                         draw.text(
-                            ((image.size[0]-width_username) * 0.160, adjusted_name_pos_2),
+                            ((image.size[0]-width_username) / 8, adjusted_name_pos_2),
                             username,
                             (255, 255, 255),
                             font=second_font_size)
@@ -135,7 +142,7 @@ class Route:
                     width_username = draw.textsize(username, font=first_font_size)[0]
 
                     draw.text(
-                        ((image.size[0]-width_username) * 0.160, adjusted_name_pos_1),
+                        ((image.size[0]-width_username) / 8, adjusted_name_pos_1),
                         username,
                         primary_color,
                         font=first_font_size
@@ -150,7 +157,7 @@ class Route:
                     (440, content_box_pos_y),
                     "Nickname: ",
                     primary_color,
-                    font=self.header2
+                    font=self.header3
                 )
 
                 width_nickname = draw.textsize(nickname, font=self.header4)[0]
@@ -173,7 +180,7 @@ class Route:
                     (440, content_box_pos_y),
                     "Added Roles: ",
                     primary_color,
-                    font=self.header2
+                    font=self.header3
                 )
                 roles_str = ", ".join(roles["added"])
 
@@ -196,7 +203,7 @@ class Route:
                     (440, content_box_pos_y),
                     "Removed Roles: ",
                     primary_color,
-                    font=self.header2
+                    font=self.header3
                 )
                 roles_str = ", ".join(roles["removed"])
 
@@ -219,7 +226,7 @@ class Route:
                     (440, content_box_pos_y),
                     "Error(s): ",
                     primary_color,
-                    font=self.header2
+                    font=self.header3
                 )
                 error_str = ", ".join(errors)
 
@@ -242,7 +249,7 @@ class Route:
                     (440, content_box_pos_y),
                     "Warning(s): ",
                     primary_color,
-                    font=self.header2
+                    font=self.header3
                 )
                 warning_str = ", ".join(warnings)
 
