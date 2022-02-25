@@ -208,7 +208,7 @@ class Route:
                 roles_str = ", ".join(roles["removed"])
 
                 wrapper = TextWrapper(roles_str, self.header5, 350, 5)
-                wrapped_text, _ = wrapper.wrapped_text()
+                wrapped_text, lines_used = wrapper.wrapped_text()
 
                 content_box_pos_y += 35
 
