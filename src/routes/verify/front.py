@@ -21,6 +21,7 @@ class Route:
 
         self.session = None
 
+
     async def handler(self, request):
         json_data = request.json
         background   = json_data.get("background")
@@ -162,7 +163,7 @@ class Route:
 
                 width_nickname = draw.textsize(nickname, font=self.header4)[0]
 
-                if width_nickname >= 250:
+                if width_nickname > 270:
                     content_box_pos_y = 50
                     nickname_extended = True
 
@@ -175,51 +176,77 @@ class Route:
 
                 content_box_pos_y += 35
 
+            wrapped_lines_added, lines_used_added = [], 0
+            wrapped_lines_removed, lines_used_removed = [], 0
+            wrapped_text_added = wrapped_text_removed = ""
+            roles_added_font = self.header4
+            roles_removed_font = self.header4
+
             if roles.get("added"):
+                roles_str = ", ".join(roles["added"])
+
+                if len(roles["added"]) >= 10:
+                    roles_added_font = self.header5
+
+                wrapper = TextWrapper(roles_str, roles_added_font, 400, 10)
+                wrapped_lines_added, lines_used_added = wrapper.wrapped_text(return_lines=True)
+
+
+            if roles.get("removed"):
+                roles_str = ", ".join(roles["removed"])
+
+                if len(roles["removed"]) >= 10:
+                    roles_removed_font = self.header5
+
+                wrapper = TextWrapper(roles_str, roles_removed_font, 400, 10)
+                wrapped_lines_removed, lines_used_removed = wrapper.wrapped_text(return_lines=True)
+
+
+            if lines_used_added + lines_used_removed > 10:
+                wrapped_text_added = "\n".join(wrapped_lines_added[:5])
+                wrapped_text_removed = "\n".join(wrapped_lines_removed[:5])
+            else:
+                wrapped_text_added = "\n".join(wrapped_lines_added)
+                wrapped_text_removed = "\n".join(wrapped_lines_removed)
+
+            if wrapped_text_added:
                 draw.text(
                     (440, content_box_pos_y),
                     "Added Roles: ",
                     primary_color,
                     font=self.header3
                 )
-                roles_str = ", ".join(roles["added"])
-
-                wrapper = TextWrapper(roles_str, self.header5, 330, 10)
-                wrapped_text, lines_used = wrapper.wrapped_text()
 
                 content_box_pos_y += 35
 
                 draw.text(
                     (440, content_box_pos_y),
-                    wrapped_text,
+                    wrapped_text_added,
                     (255, 255, 255),
-                    font=self.header4
+                    font=roles_added_font
                 )
 
-                content_box_pos_y += 35 ** lines_used
+                content_box_pos_y += 35 ** lines_used_added
 
-            if roles.get("removed"):
+            if wrapped_text_removed:
                 draw.text(
                     (440, content_box_pos_y),
                     "Removed Roles: ",
                     primary_color,
                     font=self.header3
                 )
-                roles_str = ", ".join(roles["removed"])
-
-                wrapper = TextWrapper(roles_str, self.header5, 350, 10)
-                wrapped_text, lines_used = wrapper.wrapped_text()
 
                 content_box_pos_y += 35
 
                 draw.text(
                     (440, content_box_pos_y),
-                    wrapped_text,
+                    wrapped_text_removed,
                     (255, 255, 255),
-                    font=self.header4
+                    font=roles_removed_font
                 )
 
-                content_box_pos_y += 35 ** lines_used
+                content_box_pos_y += 35 ** lines_used_removed
+
 
             if errors:
                 draw.text(

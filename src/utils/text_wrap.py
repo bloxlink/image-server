@@ -47,7 +47,7 @@ class TextWrapper(object):
             font=self.font
         )[0]
 
-    def wrapped_text(self):
+    def wrapped_text(self, return_lines=False):
         wrapped_lines = []
         current_line = []
 
@@ -100,4 +100,4 @@ class TextWrapper(object):
 
         wrapped_lines = wrapped_lines[:self.max_lines]
 
-        return "\n".join(wrapped_lines), len(wrapped_lines)
+        return "\n".join(wrapped_lines) if not return_lines else wrapped_lines, len(wrapped_lines)
