@@ -96,6 +96,7 @@ class Route:
 
                             headshot_image  = Image.open(headshot_buffer)
                             headshot_image  = headshot_image.resize((220, 220))
+                            headshot_image  = headshot_image.convert("RGBA")
                             image.paste(headshot_image, prop_dim, headshot_image)
                 else:
                     with Image.open(f"./assets/props/{prop_name}") as prop_image:
