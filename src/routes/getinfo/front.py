@@ -78,7 +78,10 @@ class Route:
 
             for prop in background_props:
                 if isinstance(prop, dict):
-                    prop = prop["getinfo"]
+                    prop = prop.get("getinfo")
+
+                    if not prop:
+                        continue
 
                 if isinstance(prop, tuple):
                     prop_name = prop[0]

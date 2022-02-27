@@ -104,11 +104,11 @@ IMAGE_CONFIG = {
             }
         },
         "props": (
-            "heart.png",
-            ("HEADSHOT", (160, 100)),
+            {"getinfo": "heart.png", "verify": "bigger_moon.png"},
+            {"getinfo": ("HEADSHOT",  (160, 100)), "verify": ("HEADSHOT", (90, 50))},
             "BACKGROUND",
-            "wings.png",
-            "heart_outline.png"
+            {"getinfo": "wings.png"},
+            {"getinfo": "heart_outline.png", "verify": "bigger_moon_outline.png"},
         ),
         "hexes": {
             "primary_color": (139, 60, 240)
