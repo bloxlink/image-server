@@ -283,7 +283,7 @@ IMAGE_CONFIG = {
     },
 
     "runner": {
-        "name": "Runners Background",
+        "name": "Runner's Background",
         "acquirable": False,
         "available": False,
         "free": False,
