@@ -97,6 +97,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/cupid_valentine.png",
                 "front": "assets/backgrounds/getinfo/front/cupid_valentine.png",
                 "back": "assets/backgrounds/getinfo/back/cupid_valentine.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/cupid_valentine.png",
+                "front": "assets/backgrounds/verify/front/cupid_valentine.png",
             }
         },
         "props": (
