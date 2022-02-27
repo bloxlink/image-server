@@ -281,5 +281,22 @@ IMAGE_CONFIG = {
             }
         }
     },
+
+    "runner": {
+        "name": "Runners Background",
+        "acquirable": False,
+        "available": False,
+        "free": False,
+        "categories": [],
+        "exclude_from_all_backgrounds": True,
+        "paths": {
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/special/runner.png",
+                "front": "assets/backgrounds/getinfo/front/special/runner.png",
+                "back": "assets/backgrounds/getinfo/back/special/runner.png"
+            }
+        },
+        "unlocked": [115147252850360325, 84117866944663552, 398624891676524545]
+    },
 }
 
