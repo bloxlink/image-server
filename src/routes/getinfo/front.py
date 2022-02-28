@@ -22,17 +22,18 @@ class Route:
         self.session = None
 
     async def handler(self, request):
-        background   = request.args.get("background")
-        background   = background if background != "null" and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
+        json_data = request.json
+        background   = json_data.get("background")
+        background   = background if background and IMAGE_CONFIG.get(background, {}).get("paths", {}).get("getinfo", {}).get("front") else DEFAULT_GETINFO_BACKGROUND
 
-        banned       = request.args.get("banned") == "true"
-        username     = request.args.get("username")
-        display_name = request.args.get("display_name") if not banned else ""
-        description  = cleanse(request.args.get("description", "")) or "No description available."
-        headshot     = request.args.get("headshot")
-        overlay      = request.args.get("overlay")
-        roblox_id    = request.args.get("id")
-        roblox_age   = request.args.get("age")
+        banned       = bool(json_data.get("banned"))
+        username     = json_data.get("username")
+        display_name = json_data.get("display_name") if not banned else ""
+        description  = cleanse(json_data.get("description", "")) or "No description available."
+        headshot     = json_data.get("headshot")
+        overlay      = json_data.get("overlay")
+        roblox_id    = json_data.get("id")
+        roblox_age   = json_data.get("age")
 
         if banned:
             background = "black"
@@ -76,6 +77,12 @@ class Route:
             image = Image.new("RGBA", (background_image.width, background_image.height))
 
             for prop in background_props:
+                if isinstance(prop, dict):
+                    prop = prop.get("getinfo")
+
+                    if not prop:
+                        continue
+
                 if isinstance(prop, tuple):
                     prop_name = prop[0]
                     prop_dim = prop[1]
@@ -92,6 +99,7 @@ class Route:
 
                             headshot_image  = Image.open(headshot_buffer)
                             headshot_image  = headshot_image.resize((220, 220))
+                            headshot_image  = headshot_image.convert("RGBA")
                             image.paste(headshot_image, prop_dim, headshot_image)
                 else:
                     with Image.open(f"./assets/props/{prop_name}") as prop_image:
@@ -114,7 +122,7 @@ class Route:
                         draw.text(
                             ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                             username,
-                            (255, 255, 255),
+                            primary_color,
                             font=first_font_size
                         )
                     else:
@@ -139,7 +147,7 @@ class Route:
                     draw.text(
                         ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
                         username,
-                        (255, 255, 255),
+                        primary_color,
                         font=first_font_size
                     )
 
@@ -165,30 +173,8 @@ class Route:
                 if len(description) > 500:
                     description = f"{description[:500]}..."
 
-                wrapper = TextWrapper(description, self.header5, image.width-70)
-
-                # import time
-                # avg_1 = []
-                # for i in range(1000):
-                #     start = time.time()
-                #     wrapped_text = wrapper.wrapped_text1()
-                #     end = time.time()
-                #     time_delta = end-start
-                #     avg_1.append(time_delta)
-
-                # print(sum(avg_1)/len(avg_1))
-
-                # avg_2 = []
-                # for i in range(1000):
-                #     start = time.time()
-                #     wrapped_text = wrapper.wrapped_text2()
-                #     end = time.time()
-                #     time_delta = end-start
-                #     avg_2.append(time_delta)
-
-                # print(sum(avg_2)/len(avg_2))
-
-                wrapped_text = wrapper.wrapped_text()
+                wrapper = TextWrapper(description, self.header5, image.width-70, 10)
+                wrapped_text, _ = wrapper.wrapped_text()
 
                 draw.text(
                     (40, 505),

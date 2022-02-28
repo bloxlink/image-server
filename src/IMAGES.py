@@ -12,6 +12,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/breezy_meadows.png",
                 "front": "assets/backgrounds/getinfo/front/breezy_meadows.png",
                 "back": "assets/backgrounds/getinfo/back/breezy_meadows.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/breezy_meadows.png",
+                "front": "assets/backgrounds/verify/front/breezy_meadows.png",
             }
         },
         "hexes": {
@@ -30,6 +34,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/deep_seas.png",
                 "front": "assets/backgrounds/getinfo/front/deep_seas.png",
                 "back": "assets/backgrounds/getinfo/back/deep_seas.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/deep_seas.png",
+                "front": "assets/backgrounds/verify/front/deep_seas.png",
             }
         }
     },
@@ -89,14 +97,18 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/cupid_valentine.png",
                 "front": "assets/backgrounds/getinfo/front/cupid_valentine.png",
                 "back": "assets/backgrounds/getinfo/back/cupid_valentine.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/cupid_valentine.png",
+                "front": "assets/backgrounds/verify/front/cupid_valentine.png",
             }
         },
         "props": (
-            "heart.png",
-            ("HEADSHOT", (160, 100)),
+            {"getinfo": "heart.png", "verify": "bigger_moon.png"},
+            {"getinfo": ("HEADSHOT",  (160, 100)), "verify": ("HEADSHOT", (90, 50))},
             "BACKGROUND",
-            "wings.png",
-            "heart_outline.png"
+            {"getinfo": "wings.png"},
+            {"getinfo": "heart_outline.png", "verify": "bigger_moon_outline.png"},
         ),
         "hexes": {
             "primary_color": (139, 60, 240)
@@ -113,6 +125,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/frosty_winterland.png",
                 "front": "assets/backgrounds/getinfo/front/frosty_winterland.png",
                 "back": "assets/backgrounds/getinfo/back/frosty_winterland.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/frosty_winterland.png",
+                "front": "assets/backgrounds/verify/front/frosty_winterland.png",
             }
         }
     },
@@ -127,10 +143,14 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/raging_volcano.png",
                 "front": "assets/backgrounds/getinfo/front/raging_volcano.png",
                 "back": "assets/backgrounds/getinfo/back/raging_volcano.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/raging_volcano.png",
+                "front": "assets/backgrounds/verify/front/raging_volcano.png",
             }
         },
         "props": (
-            "volcano_rock.png",
+            {"getinfo": "volcano_rock.png", "verify": "bigger_volcano_rock.png"},
             "HEADSHOT",
             "BACKGROUND",
 
@@ -150,6 +170,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/city_life.png",
                 "front": "assets/backgrounds/getinfo/front/city_life.png",
                 "back": "assets/backgrounds/getinfo/back/city_life.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/city_life.png",
+                "front": "assets/backgrounds/verify/front/city_life.png",
             }
         }
     },
@@ -164,6 +188,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/rainy_day.png",
                 "front": "assets/backgrounds/getinfo/front/rainy_day.png",
                 "back": "assets/backgrounds/getinfo/back/rainy_day.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/rainy_day.png",
+                "front": "assets/backgrounds/verify/front/rainy_day.png",
             }
         }
     },
@@ -180,6 +208,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/merch_storm.png",
                 "front": "assets/backgrounds/getinfo/front/merch_storm.png",
                 "back": "assets/backgrounds/getinfo/back/merch_storm.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/merch_storm.png",
+                "front": "assets/backgrounds/verify/front/merch_storm.png",
             }
         }
     },
@@ -194,6 +226,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/sweet_tooth.png",
                 "front": "assets/backgrounds/getinfo/front/sweet_tooth.png",
                 "back": "assets/backgrounds/getinfo/back/sweet_tooth.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/sweet_tooth.png",
+                "front": "assets/backgrounds/verify/front/sweet_tooth.png",
             }
         }
     },
@@ -208,6 +244,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/starry_night.png",
                 "front": "assets/backgrounds/getinfo/front/starry_night.png",
                 "back": "assets/backgrounds/getinfo/back/starry_night.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/starry_night.png",
+                "front": "assets/backgrounds/verify/front/starry_night.png",
             }
         }
     },
@@ -222,6 +262,10 @@ IMAGE_CONFIG = {
                 "whole": "assets/backgrounds/getinfo/whole/retro_gaming.png",
                 "front": "assets/backgrounds/getinfo/front/retro_gaming.png",
                 "back": "assets/backgrounds/getinfo/back/retro_gaming.png"
+            },
+            "verify": {
+                "whole": "assets/backgrounds/verify/whole/retro_gaming.png",
+                "front": "assets/backgrounds/verify/front/retro_gaming.png",
             }
         }
     },
@@ -242,19 +286,21 @@ IMAGE_CONFIG = {
         }
     },
 
-    "blank_test": {
-        "name": "Test",
+    "runner": {
+        "name": "Runner's Background",
         "acquirable": False,
-        "available": True,
+        "available": False,
         "free": False,
         "categories": [],
-        "exclude_from_all_backgrounds": False,
+        "exclude_from_all_backgrounds": True,
         "paths": {
-            "verify": {
-                "whole": "assets/backgrounds/verify/whole/blank_test.png",
-                "front": "assets/backgrounds/verify/front/blank_test.png",
+            "getinfo": {
+                "whole": "assets/backgrounds/getinfo/whole/special/runner.png",
+                "front": "assets/backgrounds/getinfo/front/special/runner.png",
+                "back": "assets/backgrounds/getinfo/back/special/runner.png"
             }
-        }
+        },
+        "unlocked": [115147252850360325, 84117866944663552, 398624891676524545]
     },
 }
 
