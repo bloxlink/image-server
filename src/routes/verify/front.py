@@ -32,11 +32,6 @@ class Route:
         display_name = json_data.get("display_name")
         headshot     = json_data.get("headshot")
         nickname     = json_data.get("nickname")
-        # json_data["roles"] = None
-        # roles        = json_data.get("roles") or {
-        #     "added": ["test oofaaasdasdasdasdasdasda"] * 70,
-        #     "removed": ["test oofaaasdasdasdasdasdasda"] * 70
-        # }
         roles        = json_data.get("roles") or {}
         errors       = json_data.get("errors") or []
         warnings     = json_data.get("warnings") or []
@@ -165,6 +160,7 @@ class Route:
 
             if nickname:
                 nickname_extended = False
+                nickname_font = self.header4
 
                 draw.text(
                     (440, content_box_pos_y),
@@ -175,7 +171,11 @@ class Route:
 
                 width_nickname = draw.textsize(nickname, font=self.header4)[0]
 
-                if width_nickname > 270:
+                if width_nickname >= 464:
+                    nickname_font = self.header5
+                    content_box_pos_y = 50
+                    nickname_extended = True
+                elif width_nickname > 270:
                     content_box_pos_y = 50
                     nickname_extended = True
 
@@ -183,7 +183,7 @@ class Route:
                     (620 if not nickname_extended else 440, content_box_pos_y+4),
                     nickname,
                     (255, 255, 255),
-                    font=self.header4
+                    font=nickname_font
                 )
 
                 content_box_pos_y += 35
@@ -215,7 +215,6 @@ class Route:
                 wrapper = TextWrapper(roles_str, roles_removed_font, 455, 20)
                 wrapped_lines_removed, lines_used_removed = wrapper.wrapped_text(return_lines=True)
 
-            #print(lines_used_added, lines_used_removed, lines_free)
 
             if lines_used_added + lines_used_removed > lines_free:
                 added_num_to_use = clamp(lines_used_added, min(lines_used_added, lines_used_removed), lines_free)
@@ -225,21 +224,6 @@ class Route:
                 wrapped_text_removed = "\n".join(wrapped_lines_removed[:removed_num_to_use])
 
                 lines_free -= added_num_to_use + removed_num_to_use
-
-                # if lines_used_added < lines_used_removed:
-                #     using_removed_lines = wrapped_lines_removed[:lines_used_removed]
-                #     wrapped_text_removed = "\n".join(using_removed_lines)
-
-
-                #     using_added_lines = wrapped_lines_added[:lines_used_removed]
-                #     wrapped_text_removed = "\n".join(using_removed_lines)
-
-                #     lines_free -= len(using_removed_lines) + len(using_added_lines)
-
-
-
-                # use up as much as first_num, then consume the second number
-
 
             else:
                 wrapped_text_added = "\n".join(wrapped_lines_added)
