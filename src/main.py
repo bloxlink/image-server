@@ -1,6 +1,7 @@
 from sanic import Sanic
 import os
 from config import SERVER_HOST, SERVER_PORT
+from middleware import auth
 import importlib
 import logging
 
@@ -42,8 +43,11 @@ def register_routes(path=None):
 
 
 
+
+
 if __name__ == '__main__':
     app = Sanic("BloxlinkImageServer")
+    app.register_middleware(auth, "request")
 
     app.static("/assets", "./assets")
 
