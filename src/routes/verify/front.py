@@ -6,7 +6,6 @@ from IMAGES import IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.clamp import clamp
 import aiohttp
-import math
 
 
 class Route:
