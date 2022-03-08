@@ -21,6 +21,8 @@ class Route:
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
+        self.loading_image = Image.open("assets/props/loading.png")
+
         self.session = None
 
 
@@ -107,8 +109,8 @@ class Route:
                                 try:
                                     headshot_image  = Image.open(headshot_buffer)
                                 except UnidentifiedImageError:
-                                    headshot_image = None
-                                    raise Exception(f"Unidentified image: {headshot}")
+                                    prop_dim = (0, 0)
+                                    image.paste(self.loading_image, prop_dim, self.loading_image)
                                 else:
                                     headshot_image  = headshot_image.resize((250, 250))
                                     headshot_image  = headshot_image.convert("RGBA")
@@ -321,22 +323,12 @@ class Route:
                             font=self.header4
                         )
 
-            try:
-                with BytesIO() as bf:
-                    image.save(bf, "PNG", quality=70)
-                    image.seek(0)
 
-                    return raw(bf.getvalue())
+            with BytesIO() as bf:
+                image.save(bf, "PNG", quality=70)
+                image.seek(0)
 
-            finally:
-                if headshot_buffer:
-                    headshot_buffer.close()
-
-                if image:
-                    image.close()
-
-                if headshot_image:
-                    headshot_image.close()
+                return raw(bf.getvalue())
 
         except Exception as e:
             tb = traceback.format_exc()
@@ -358,3 +350,13 @@ class Route:
                 resp = await self.session.post(ERROR_WEBHOOK, json=webhook_data, headers={"Content-Type": "application/json"})
             else:
                 print(tb)
+
+        finally:
+            if headshot_buffer:
+                headshot_buffer.close()
+
+            if image:
+                image.close()
+
+            if headshot_image:
+                headshot_image.close()
