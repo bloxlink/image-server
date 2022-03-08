@@ -1,11 +1,10 @@
 from sanic import Sanic
 import os
-from config import SERVER_HOST, SERVER_PORT
+from config import SERVER_HOST, SERVER_PORT, DEBUG_MODE
 from middleware import auth
 import importlib
 import logging
 
-DEBUG_MODE = os.getenv("PROD") != "TRUE"
 
 if DEBUG_MODE:
     cpu_count = 1
