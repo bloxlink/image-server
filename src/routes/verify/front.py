@@ -1,5 +1,5 @@
 from sanic.response import raw
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, UnidentifiedImageError
 from io import BytesIO
 from config import DEFAULT_VERIFY_BACKGROUND, ERROR_WEBHOOK, DEBUG_MODE
 from IMAGES import IMAGE_CONFIG
@@ -104,10 +104,15 @@ class Route:
                             async with self.session.get(headshot) as resp:
                                 headshot_buffer = BytesIO(await resp.read())
 
-                                headshot_image  = Image.open(headshot_buffer)
-                                headshot_image  = headshot_image.resize((250, 250))
-                                headshot_image  = headshot_image.convert("RGBA")
-                                image.paste(headshot_image, prop_dim, headshot_image)
+                                try:
+                                    headshot_image  = Image.open(headshot_buffer)
+                                except UnidentifiedImageError:
+                                    headshot_image = None
+                                    raise Exception(f"Unidentified image: {headshot}")
+                                else:
+                                    headshot_image  = headshot_image.resize((250, 250))
+                                    headshot_image  = headshot_image.convert("RGBA")
+                                    image.paste(headshot_image, prop_dim, headshot_image)
                     else:
                         with Image.open(f"./assets/props/{prop_name}") as prop_image:
                             image.paste(prop_image, prop_dim, prop_image)
@@ -341,7 +346,7 @@ class Route:
                     "username": "Image Server",
                     "embeds": [{
                         "timestamp": datetime.datetime.now().isoformat(),
-                        "description": f"This is the **{'debug' if DEBUG_MODE else 'production'}** instance."
+                        "description": f"This is the **{'debug' if DEBUG_MODE else 'production'}** instance.\n"
                                         f"**Roblox Username:** {username}",
                         "fields": [
                             {"name": "Traceback", "value": tb[0:2000]}
