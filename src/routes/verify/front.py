@@ -21,7 +21,7 @@ class Route:
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
 
-        self.loading_image = Image.open("assets/props/loading.png")
+        self.loading_image = Image.open("assets/props/bigger_loading.png")
 
         self.session = None
 

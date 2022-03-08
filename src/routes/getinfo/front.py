@@ -1,11 +1,13 @@
 from sanic.response import raw
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, UnidentifiedImageError
 from io import BytesIO
-from config import DEFAULT_GETINFO_BACKGROUND
+from config import DEFAULT_GETINFO_BACKGROUND, ERROR_WEBHOOK, DEBUG_MODE
 from IMAGES import IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.text_cleanse import cleanse
 import aiohttp
+import datetime
+import traceback
 
 
 class Route:
@@ -18,6 +20,8 @@ class Route:
        # self.header3 = ImageFont.truetype("fonts/cartoonist/TovariSans.ttf", 90)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
+
+        self.loading_image = Image.open("assets/props/loading.png")
 
         self.session = None
 
@@ -45,78 +49,110 @@ class Route:
 
         primary_color = background_hexes.get("primary_color", (240, 191, 60))
 
-        # image storage for closing
-        headshot_image = None
+        try:
 
-        # buffer storage
-        headshot_buffer = None
+            # image storage for closing
+            headshot_image = None
 
-        if not self.session:
-            self.session = aiohttp.ClientSession()
+            # buffer storage
+            headshot_buffer = None
 
-        first_font_size = self.header1
-        second_font_size = self.header2
+            if not self.session:
+                self.session = aiohttp.ClientSession()
 
-        adjusted_name_pos_1 = 290
-        adjusted_name_pos_2 = 370
-
-        if len(username) >= 20:
-            username = f"{username[:20]}..."
-
-        if len(display_name) >= 20:
-            display_name = f"{display_name[:20]}..."
-
-        if len(username) >= 10 or len(display_name) >= 10:
-            first_font_size = self.header2
+            first_font_size = self.header1
             second_font_size = self.header2
-            adjusted_name_pos_1 = 320
+
+            adjusted_name_pos_1 = 290
             adjusted_name_pos_2 = 370
 
+            if len(username) >= 20:
+                username = f"{username[:20]}..."
 
-        with Image.open(background_path) as background_image:
-            image = Image.new("RGBA", (background_image.width, background_image.height))
+            if len(display_name) >= 20:
+                display_name = f"{display_name[:20]}..."
 
-            for prop in background_props:
-                if isinstance(prop, dict):
-                    prop = prop.get("getinfo")
+            if len(username) >= 10 or len(display_name) >= 10:
+                first_font_size = self.header2
+                second_font_size = self.header2
+                adjusted_name_pos_1 = 320
+                adjusted_name_pos_2 = 370
 
-                    if not prop:
-                        continue
 
-                if isinstance(prop, tuple):
-                    prop_name = prop[0]
-                    prop_dim = prop[1]
-                else:
-                    prop_name = prop
-                    prop_dim = (160, 70) if prop_name == "HEADSHOT" else (0, 0)
+            with Image.open(background_path) as background_image:
+                image = Image.new("RGBA", (background_image.width, background_image.height))
 
-                if prop_name == "BACKGROUND":
-                    image.paste(background_image, prop_dim, background_image)
-                elif prop_name == "HEADSHOT":
-                    if headshot:
-                        async with self.session.get(headshot) as resp:
-                            headshot_buffer = BytesIO(await resp.read())
+                for prop in background_props:
+                    if isinstance(prop, dict):
+                        prop = prop.get("getinfo")
 
-                            headshot_image  = Image.open(headshot_buffer)
-                            headshot_image  = headshot_image.resize((220, 220))
-                            headshot_image  = headshot_image.convert("RGBA")
-                            image.paste(headshot_image, prop_dim, headshot_image)
-                else:
-                    with Image.open(f"./assets/props/{prop_name}") as prop_image:
-                        image.paste(prop_image, prop_dim, prop_image)
+                        if not prop:
+                            continue
 
-            if overlay:
-                with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
-                    image.paste(overlay_image, (0, 0), overlay_image)
+                    if isinstance(prop, tuple):
+                        prop_name = prop[0]
+                        prop_dim = prop[1]
+                    else:
+                        prop_name = prop
+                        prop_dim = (160, 70) if prop_name == "HEADSHOT" else (0, 0)
 
-            draw = ImageDraw.Draw(image)
+                    if prop_name == "BACKGROUND":
+                        image.paste(background_image, prop_dim, background_image)
+                    elif prop_name == "HEADSHOT":
+                        if headshot:
+                            async with self.session.get(headshot) as resp:
+                                headshot_buffer = BytesIO(await resp.read())
 
-            if username:
-                username = f"@{username}"
+                                try:
+                                    headshot_image  = Image.open(headshot_buffer)
+                                except UnidentifiedImageError:
+                                    prop_dim = (0, 0)
+                                    image.paste(self.loading_image, prop_dim, self.loading_image)
+                                else:
+                                    headshot_image  = headshot_image.resize((220, 220))
+                                    headshot_image  = headshot_image.convert("RGBA")
+                                    image.paste(headshot_image, prop_dim, headshot_image)
+                    else:
+                        with Image.open(f"./assets/props/{prop_name}") as prop_image:
+                            image.paste(prop_image, prop_dim, prop_image)
 
-                if display_name:
-                    if username[1:] == display_name:
-                        # header is username. don't display display_name
+                if overlay:
+                    with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
+                        image.paste(overlay_image, (0, 0), overlay_image)
+
+                draw = ImageDraw.Draw(image)
+
+                if username:
+                    username = f"@{username}"
+
+                    if display_name:
+                        if username[1:] == display_name:
+                            # header is username. don't display display_name
+                            width_username = draw.textsize(username, font=first_font_size)[0]
+
+                            draw.text(
+                                ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
+                                username,
+                                primary_color,
+                                font=first_font_size
+                            )
+                        else:
+                            # show both username and display name
+                            width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
+                            draw.text(
+                                ((image.size[0]-width_display_name) / 2, adjusted_name_pos_1),
+                                display_name,
+                                primary_color,
+                                font=first_font_size)
+
+                            width_username = draw.textsize(username, font=second_font_size)[0]
+                            draw.text(
+                                ((image.size[0]-width_username) / 2, adjusted_name_pos_2),
+                                username,
+                                (255, 255, 255),
+                                font=second_font_size)
+
+                    else:
                         width_username = draw.textsize(username, font=first_font_size)[0]
 
                         draw.text(
@@ -125,79 +161,75 @@ class Route:
                             primary_color,
                             font=first_font_size
                         )
-                    else:
-                        # show both username and display name
-                        width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
-                        draw.text(
-                            ((image.size[0]-width_display_name) / 2, adjusted_name_pos_1),
-                            display_name,
-                            primary_color,
-                            font=first_font_size)
 
-                        width_username = draw.textsize(username, font=second_font_size)[0]
-                        draw.text(
-                            ((image.size[0]-width_username) / 2, adjusted_name_pos_2),
-                            username,
-                            (255, 255, 255),
-                            font=second_font_size)
+                roblox_id_age_offset = 10 if not overlay else 40
 
-                else:
-                    width_username = draw.textsize(username, font=first_font_size)[0]
-
+                if roblox_age:
                     draw.text(
-                        ((image.size[0]-width_username) / 2, adjusted_name_pos_1),
-                        username,
+                        (10, roblox_id_age_offset),
+                        f"Minted {roblox_age}",
                         primary_color,
-                        font=first_font_size
+                        font=self.header5
                     )
 
-            roblox_id_age_offset = 10 if not overlay else 40
+                if roblox_id:
+                    draw.text(
+                        (10, roblox_id_age_offset+25),
+                        f"#{roblox_id}",
+                        primary_color,
+                        font=self.header5
+                    )
 
-            if roblox_age:
-                draw.text(
-                    (10, roblox_id_age_offset),
-                    f"Minted {roblox_age}",
-                    primary_color,
-                    font=self.header5
-                )
+                if description:
+                    if len(description) > 500:
+                        description = f"{description[:500]}..."
 
-            if roblox_id:
-                draw.text(
-                    (10, roblox_id_age_offset+25),
-                    f"#{roblox_id}",
-                    primary_color,
-                    font=self.header5
-                )
+                    wrapper = TextWrapper(description, self.header5, image.width-70, 10)
+                    wrapped_text, _ = wrapper.wrapped_text()
 
-            if description:
-                if len(description) > 500:
-                    description = f"{description[:500]}..."
+                    draw.text(
+                        (40, 505),
+                        wrapped_text,
+                        (255, 255, 255),
+                        font=self.header5
+                    )
 
-                wrapper = TextWrapper(description, self.header5, image.width-70, 10)
-                wrapped_text, _ = wrapper.wrapped_text()
+                if banned:
+                    width_banned = draw.textsize("This user is banned.", font=self.header4)[0]
+                    draw.text(
+                        ((image.size[0]-width_banned) / 2, 400),
+                        "This user is banned.",
+                        (255, 0, 0),
+                        font=self.header4
+                    )
 
-                draw.text(
-                    (40, 505),
-                    wrapped_text,
-                    (255, 255, 255),
-                    font=self.header5
-                )
 
-            if banned:
-                width_banned = draw.textsize("This user is banned.", font=self.header4)[0]
-                draw.text(
-                    ((image.size[0]-width_banned) / 2, 400),
-                    "This user is banned.",
-                    (255, 0, 0),
-                    font=self.header4
-                )
-
-        try:
             with BytesIO() as bf:
                 image.save(bf, "PNG", quality=70)
                 image.seek(0)
 
                 return raw(bf.getvalue())
+
+        except Exception as e:
+            tb = traceback.format_exc()
+
+            if ERROR_WEBHOOK:
+                webhook_data = {
+                    "username": "Image Server",
+                    "embeds": [{
+                        "timestamp": datetime.datetime.now().isoformat(),
+                        "description": f"This is the **{'debug' if DEBUG_MODE else 'production'}** instance.\n"
+                                        f"**Roblox Username:** {username}",
+                        "fields": [
+                            {"name": "Traceback", "value": tb[0:2000]}
+                        ],
+                        "color": 13319470,
+                    }]
+                }
+
+                resp = await self.session.post(ERROR_WEBHOOK, json=webhook_data, headers={"Content-Type": "application/json"})
+            else:
+                print(tb)
 
         finally:
             if headshot_buffer:
