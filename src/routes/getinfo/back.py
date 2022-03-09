@@ -32,7 +32,6 @@ class Route:
 
         background_config = IMAGE_CONFIG[background]
         background_path = background_config["paths"]["getinfo"]["back"]
-        background_props = background_config.get("props", {})
         background_hexes = background_config.get("hexes", {})
 
         primary_color = background_hexes.get("primary_color", (240, 191, 60))

@@ -1,12 +1,13 @@
 from sanic.response import raw
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, UnidentifiedImageError
 from io import BytesIO
-from config import DEFAULT_VERIFY_BACKGROUND
+from config import DEFAULT_VERIFY_BACKGROUND, ERROR_WEBHOOK, DEBUG_MODE
 from IMAGES import IMAGE_CONFIG
 from utils.text_wrap import TextWrapper
 from utils.clamp import clamp
 import aiohttp
-import math
+import datetime
+import traceback
 
 
 class Route:
@@ -19,6 +20,8 @@ class Route:
         self.header3 = ImageFont.truetype("fonts/TovariSans.ttf", 50)
         self.header4 = ImageFont.truetype("fonts/TovariSans.ttf", 40)
         self.header5 = ImageFont.truetype("fonts/TovariSans.ttf", 30)
+
+        self.loading_image = Image.open("assets/props/bigger_loading.png")
 
         self.session = None
 
@@ -49,79 +52,110 @@ class Route:
         # buffer storage
         headshot_buffer = None
 
-        if not self.session:
-            self.session = aiohttp.ClientSession()
+        try:
+            if not self.session:
+                self.session = aiohttp.ClientSession()
 
-        first_font_size = self.header1
-        second_font_size = self.header2
-
-        adjusted_name_pos_1 = 290
-        adjusted_name_pos_2 = 370
-
-        lines_free = 10
-
-        if len(username) >= 13:
-            username = f"{username[:13]}..."
-
-        if len(display_name) >= 13:
-            display_name = f"{display_name[:13]}..."
-
-        if len(username) >= 8 or len(display_name) >= 8:
-            first_font_size = self.header3
-            second_font_size = self.header3
-            adjusted_name_pos_1 = 320
-            adjusted_name_pos_2 = 370
-
-        elif len(username) >= 7 or len(display_name) >= 7:
-            first_font_size = self.header2
+            first_font_size = self.header1
             second_font_size = self.header2
-            adjusted_name_pos_1 = 300
+
+            adjusted_name_pos_1 = 290
             adjusted_name_pos_2 = 370
 
-        with Image.open(background_path) as background_image:
-            image = Image.new("RGBA", (background_image.width, background_image.height))
+            lines_free = 10
 
-            for prop in background_props:
-                if isinstance(prop, dict):
-                    prop = prop.get("verify")
+            if len(username) >= 13:
+                username = f"{username[:13]}..."
 
-                    if not prop:
-                        continue
+            if len(display_name) >= 13:
+                display_name = f"{display_name[:13]}..."
 
-                if isinstance(prop, tuple):
-                    prop_name = prop[0]
-                    prop_dim = prop[1]
-                else:
-                    prop_name = prop
-                    prop_dim = (90, 50) if prop_name == "HEADSHOT" else (0, 0)
+            if len(username) >= 8 or len(display_name) >= 8:
+                first_font_size = self.header3
+                second_font_size = self.header3
+                adjusted_name_pos_1 = 320
+                adjusted_name_pos_2 = 370
 
-                if prop_name == "BACKGROUND":
-                    image.paste(background_image, prop_dim, background_image)
-                elif prop_name == "HEADSHOT":
-                    if headshot:
-                        async with self.session.get(headshot) as resp:
-                            headshot_buffer = BytesIO(await resp.read())
+            elif len(username) >= 7 or len(display_name) >= 7:
+                first_font_size = self.header2
+                second_font_size = self.header2
+                adjusted_name_pos_1 = 300
+                adjusted_name_pos_2 = 370
 
-                            headshot_image  = Image.open(headshot_buffer)
-                            headshot_image  = headshot_image.resize((250, 250))
-                            headshot_image  = headshot_image.convert("RGBA")
-                            image.paste(headshot_image, prop_dim, headshot_image)
-                else:
-                    with Image.open(f"./assets/props/{prop_name}") as prop_image:
-                        image.paste(prop_image, prop_dim, prop_image)
+            with Image.open(background_path) as background_image:
+                image = Image.new("RGBA", (background_image.width, background_image.height))
 
-            # if overlay:
-            #     with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
-            #         image.paste(overlay_image, (0, 0), overlay_image)
+                for prop in background_props:
+                    if isinstance(prop, dict):
+                        prop = prop.get("verify")
 
-            draw = ImageDraw.Draw(image)
+                        if not prop:
+                            continue
 
-            if username:
-                username = f"@{username}"
+                    if isinstance(prop, tuple):
+                        prop_name = prop[0]
+                        prop_dim = prop[1]
+                    else:
+                        prop_name = prop
+                        prop_dim = (90, 50) if prop_name == "HEADSHOT" else (0, 0)
 
-                if display_name:
-                    if username[1:] == display_name:
-                        # header is username. don't display display_name
+                    if prop_name == "BACKGROUND":
+                        image.paste(background_image, prop_dim, background_image)
+                    elif prop_name == "HEADSHOT":
+                        if headshot:
+                            async with self.session.get(headshot) as resp:
+                                headshot_buffer = BytesIO(await resp.read())
+
+                                try:
+                                    headshot_image  = Image.open(headshot_buffer)
+                                except UnidentifiedImageError:
+                                    prop_dim = (0, 0)
+                                    image.paste(self.loading_image, prop_dim, self.loading_image)
+                                else:
+                                    headshot_image  = headshot_image.resize((250, 250))
+                                    headshot_image  = headshot_image.convert("RGBA")
+                                    image.paste(headshot_image, prop_dim, headshot_image)
+                    else:
+                        with Image.open(f"./assets/props/{prop_name}") as prop_image:
+                            image.paste(prop_image, prop_dim, prop_image)
+
+                # if overlay:
+                #     with Image.open(f"./assets/props/overlays/{overlay}.png") as overlay_image:
+                #         image.paste(overlay_image, (0, 0), overlay_image)
+
+                draw = ImageDraw.Draw(image)
+
+                if username:
+                    username = f"@{username}"
+
+                    if display_name:
+                        if username[1:] == display_name:
+                            # header is username. don't display display_name
+                            width_username = draw.textsize(username, font=first_font_size)[0]
+
+                            draw.text(
+                                ((image.size[0]-width_username) / 8, adjusted_name_pos_1),
+                                username,
+                                primary_color,
+                                font=first_font_size
+                            )
+                        else:
+                            # show both username and display name
+                            width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
+                            draw.text(
+                                ((image.size[0]-width_display_name) / 8, adjusted_name_pos_1),
+                                display_name,
+                                primary_color,
+                                font=first_font_size)
+
+                            width_username = draw.textsize(username, font=second_font_size)[0]
+                            draw.text(
+                                ((image.size[0]-width_username) / 8, adjusted_name_pos_2),
+                                username,
+                                (255, 255, 255),
+                                font=second_font_size)
+
+                    else:
                         width_username = draw.textsize(username, font=first_font_size)[0]
 
                         draw.text(
@@ -130,196 +164,192 @@ class Route:
                             primary_color,
                             font=first_font_size
                         )
-                    else:
-                        # show both username and display name
-                        width_display_name  = draw.textsize(display_name, font=first_font_size)[0]
-                        draw.text(
-                            ((image.size[0]-width_display_name) / 8, adjusted_name_pos_1),
-                            display_name,
-                            primary_color,
-                            font=first_font_size)
 
-                        width_username = draw.textsize(username, font=second_font_size)[0]
-                        draw.text(
-                            ((image.size[0]-width_username) / 8, adjusted_name_pos_2),
-                            username,
-                            (255, 255, 255),
-                            font=second_font_size)
+                content_box_pos_y = 15
+
+                if nickname:
+                    nickname_extended = False
+                    nickname_font = self.header4
+
+                    draw.text(
+                        (440, content_box_pos_y),
+                        "Nickname: ",
+                        primary_color,
+                        font=self.header3
+                    )
+
+                    width_nickname = draw.textsize(nickname, font=self.header4)[0]
+
+                    if width_nickname >= 464:
+                        nickname_font = self.header5
+                        content_box_pos_y = 50
+                        nickname_extended = True
+                    elif width_nickname > 270:
+                        content_box_pos_y = 50
+                        nickname_extended = True
+
+                    draw.text(
+                        (620 if not nickname_extended else 440, content_box_pos_y+4),
+                        nickname,
+                        (255, 255, 255),
+                        font=nickname_font
+                    )
+
+                    content_box_pos_y += 35
+
+                wrapped_lines_added, lines_used_added = [], 0
+                wrapped_lines_removed, lines_used_removed = [], 0
+                wrapped_text_added = wrapped_text_removed = ""
+                roles_added_font = self.header4
+                roles_removed_font = self.header4
+
+                if roles.get("added"):
+                    roles_str = ", ".join(roles["added"])
+
+                    if len(roles["added"]) >= 10:
+                        roles_added_font = self.header5
+                        lines_free += 4
+
+                    wrapper = TextWrapper(roles_str, roles_added_font, 455, 20)
+                    wrapped_lines_added, lines_used_added = wrapper.wrapped_text(return_lines=True)
+
+
+                if roles.get("removed"):
+                    roles_str = ", ".join(roles["removed"])
+
+                    if len(roles["removed"]) >= 10:
+                        roles_removed_font = self.header5
+                        lines_free += 4
+
+                    wrapper = TextWrapper(roles_str, roles_removed_font, 455, 20)
+                    wrapped_lines_removed, lines_used_removed = wrapper.wrapped_text(return_lines=True)
+
+
+                if lines_used_added + lines_used_removed > lines_free:
+                    added_num_to_use = clamp(lines_used_added, min(lines_used_added, lines_used_removed), lines_free)
+                    removed_num_to_use = lines_free - added_num_to_use if lines_free - added_num_to_use > 0 else 0
+
+                    wrapped_text_added = "\n".join(wrapped_lines_added[:added_num_to_use])
+                    wrapped_text_removed = "\n".join(wrapped_lines_removed[:removed_num_to_use])
+
+                    lines_free -= added_num_to_use + removed_num_to_use
 
                 else:
-                    width_username = draw.textsize(username, font=first_font_size)[0]
-
-                    draw.text(
-                        ((image.size[0]-width_username) / 8, adjusted_name_pos_1),
-                        username,
-                        primary_color,
-                        font=first_font_size
-                    )
-
-            content_box_pos_y = 15
-
-            if nickname:
-                nickname_extended = False
-                nickname_font = self.header4
-
-                draw.text(
-                    (440, content_box_pos_y),
-                    "Nickname: ",
-                    primary_color,
-                    font=self.header3
-                )
-
-                width_nickname = draw.textsize(nickname, font=self.header4)[0]
-
-                if width_nickname >= 464:
-                    nickname_font = self.header5
-                    content_box_pos_y = 50
-                    nickname_extended = True
-                elif width_nickname > 270:
-                    content_box_pos_y = 50
-                    nickname_extended = True
-
-                draw.text(
-                    (620 if not nickname_extended else 440, content_box_pos_y+4),
-                    nickname,
-                    (255, 255, 255),
-                    font=nickname_font
-                )
-
-                content_box_pos_y += 35
-
-            wrapped_lines_added, lines_used_added = [], 0
-            wrapped_lines_removed, lines_used_removed = [], 0
-            wrapped_text_added = wrapped_text_removed = ""
-            roles_added_font = self.header4
-            roles_removed_font = self.header4
-
-            if roles.get("added"):
-                roles_str = ", ".join(roles["added"])
-
-                if len(roles["added"]) >= 10:
-                    roles_added_font = self.header5
-                    lines_free += 4
-
-                wrapper = TextWrapper(roles_str, roles_added_font, 455, 20)
-                wrapped_lines_added, lines_used_added = wrapper.wrapped_text(return_lines=True)
+                    wrapped_text_added = "\n".join(wrapped_lines_added)
+                    wrapped_text_removed = "\n".join(wrapped_lines_removed)
+                    lines_free -= len(wrapped_lines_added) + len(wrapped_lines_removed)
 
 
-            if roles.get("removed"):
-                roles_str = ", ".join(roles["removed"])
-
-                if len(roles["removed"]) >= 10:
-                    roles_removed_font = self.header5
-                    lines_free += 4
-
-                wrapper = TextWrapper(roles_str, roles_removed_font, 455, 20)
-                wrapped_lines_removed, lines_used_removed = wrapper.wrapped_text(return_lines=True)
-
-
-            if lines_used_added + lines_used_removed > lines_free:
-                added_num_to_use = clamp(lines_used_added, min(lines_used_added, lines_used_removed), lines_free)
-                removed_num_to_use = lines_free - added_num_to_use if lines_free - added_num_to_use > 0 else 0
-
-                wrapped_text_added = "\n".join(wrapped_lines_added[:added_num_to_use])
-                wrapped_text_removed = "\n".join(wrapped_lines_removed[:removed_num_to_use])
-
-                lines_free -= added_num_to_use + removed_num_to_use
-
-            else:
-                wrapped_text_added = "\n".join(wrapped_lines_added)
-                wrapped_text_removed = "\n".join(wrapped_lines_removed)
-                lines_free -= len(wrapped_lines_added) + len(wrapped_lines_removed)
-
-
-            if wrapped_text_added:
-                draw.text(
-                    (440, content_box_pos_y),
-                    "Added Roles: ",
-                    primary_color,
-                    font=self.header3
-                )
-
-                content_box_pos_y += 35
-
-                draw.text(
-                    (440, content_box_pos_y),
-                    wrapped_text_added,
-                    (255, 255, 255),
-                    font=roles_added_font
-                )
-
-                content_box_pos_y += 35 ** lines_used_added
-
-            if wrapped_text_removed:
-                draw.text(
-                    (440, content_box_pos_y),
-                    "Removed Roles: ",
-                    primary_color,
-                    font=self.header3
-                )
-
-                content_box_pos_y += 35
-
-                draw.text(
-                    (440, content_box_pos_y),
-                    wrapped_text_removed,
-                    (255, 255, 255),
-                    font=roles_removed_font
-                )
-
-                content_box_pos_y += 35 ** lines_used_removed
-
-            if lines_free:
-                if errors:
+                if wrapped_text_added:
                     draw.text(
                         (440, content_box_pos_y),
-                        "Error(s): ",
+                        "Added Roles: ",
                         primary_color,
                         font=self.header3
                     )
-                    error_str = ", ".join(errors)
-
-                    wrapper = TextWrapper(error_str, self.header5, 350, 10)
-                    wrapped_text, lines_used = wrapper.wrapped_text()
 
                     content_box_pos_y += 35
 
                     draw.text(
                         (440, content_box_pos_y),
-                        wrapped_text,
+                        wrapped_text_added,
                         (255, 255, 255),
-                        font=self.header4
+                        font=roles_added_font
                     )
 
-                    content_box_pos_y += 35 ** lines_used
+                    content_box_pos_y += 35 ** lines_used_added
 
-                if warnings:
+                if wrapped_text_removed:
                     draw.text(
                         (440, content_box_pos_y),
-                        "Warning(s): ",
+                        "Removed Roles: ",
                         primary_color,
                         font=self.header3
                     )
-                    warning_str = ", ".join(warnings)
-
-                    wrapper = TextWrapper(warning_str, self.header5, 350, 10)
-                    wrapped_text, _ = wrapper.wrapped_text()
 
                     content_box_pos_y += 35
 
                     draw.text(
                         (440, content_box_pos_y),
-                        wrapped_text,
+                        wrapped_text_removed,
                         (255, 255, 255),
-                        font=self.header4
+                        font=roles_removed_font
                     )
 
-        try:
+                    content_box_pos_y += 35 ** lines_used_removed
+
+                if lines_free:
+                    if errors:
+                        draw.text(
+                            (440, content_box_pos_y),
+                            "Error(s): ",
+                            primary_color,
+                            font=self.header3
+                        )
+                        error_str = ", ".join(errors)
+
+                        wrapper = TextWrapper(error_str, self.header5, 350, 10)
+                        wrapped_text, lines_used = wrapper.wrapped_text()
+
+                        content_box_pos_y += 35
+
+                        draw.text(
+                            (440, content_box_pos_y),
+                            wrapped_text,
+                            (255, 255, 255),
+                            font=self.header4
+                        )
+
+                        content_box_pos_y += 35 ** lines_used
+
+                    if warnings:
+                        draw.text(
+                            (440, content_box_pos_y),
+                            "Warning(s): ",
+                            primary_color,
+                            font=self.header3
+                        )
+                        warning_str = ", ".join(warnings)
+
+                        wrapper = TextWrapper(warning_str, self.header5, 350, 10)
+                        wrapped_text, _ = wrapper.wrapped_text()
+
+                        content_box_pos_y += 35
+
+                        draw.text(
+                            (440, content_box_pos_y),
+                            wrapped_text,
+                            (255, 255, 255),
+                            font=self.header4
+                        )
+
+
             with BytesIO() as bf:
                 image.save(bf, "PNG", quality=70)
                 image.seek(0)
 
                 return raw(bf.getvalue())
+
+        except Exception as e:
+            tb = traceback.format_exc()
+
+            if ERROR_WEBHOOK:
+                webhook_data = {
+                    "username": "Image Server",
+                    "embeds": [{
+                        "timestamp": datetime.datetime.now().isoformat(),
+                        "description": f"This is the **{'debug' if DEBUG_MODE else 'production'}** instance.\n"
+                                        f"**Roblox Username:** {username}",
+                        "fields": [
+                            {"name": "Traceback", "value": tb[0:2000]}
+                        ],
+                        "color": 13319470,
+                    }]
+                }
+
+                resp = await self.session.post(ERROR_WEBHOOK, json=webhook_data, headers={"Content-Type": "application/json"})
+            else:
+                print(tb)
 
         finally:
             if headshot_buffer:
