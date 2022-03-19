@@ -89,7 +89,7 @@ IMAGE_CONFIG = {
     "cupid_valentine": {
         "name": "Cupid's Valentine - LIMITED TIME FOR SALE",
         "acquirable": True,
-        "available": True,
+        "available": False,
         "categories": ["Limited Time"],
         "exclude_from_all_backgrounds": False,
         "paths": {
@@ -117,7 +117,7 @@ IMAGE_CONFIG = {
     "frosty_winterland": {
         "name": "Frosty Winterland - LIMITED TIME FOR SALE",
         "acquirable": True,
-        "available": True,
+        "available": False,
         "categories": ["Limited Time"],
         "exclude_from_all_backgrounds": False,
         "paths": {
