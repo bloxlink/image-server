@@ -5,18 +5,6 @@ from middleware import auth
 import importlib
 import logging
 
-
-if DEBUG_MODE:
-    cpu_count = 1
-else:
-    try:
-        from os import sched_getaffinity
-        cpu_count = len(sched_getaffinity(0))
-    except ImportError:
-        from multiprocessing import cpu_count
-        cpu_count = cpu_count()
-
-
 logging.basicConfig()
 
 def register_routes(path=None):
@@ -52,4 +40,4 @@ if __name__ == '__main__':
 
 
     register_routes()
-    app.run(SERVER_HOST, SERVER_PORT, workers=cpu_count, debug=DEBUG_MODE)
+    app.run(SERVER_HOST, SERVER_PORT, fast=not DEBUG_MODE, debug=DEBUG_MODE)
