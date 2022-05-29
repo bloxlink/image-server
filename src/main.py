@@ -40,4 +40,4 @@ if __name__ == '__main__':
 
 
     register_routes()
-    app.run(SERVER_HOST, SERVER_PORT, fast=not DEBUG_MODE, debug=DEBUG_MODE)
+    app.run(SERVER_HOST, SERVER_PORT, fast=not DEBUG_MODE, debug=DEBUG_MODE, access_log=DEBUG_MODE)
