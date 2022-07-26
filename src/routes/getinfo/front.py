@@ -33,7 +33,7 @@ class Route:
         banned       = bool(json_data.get("banned"))
         username     = json_data.get("username")
         display_name = json_data.get("display_name") if not banned else ""
-        description  = cleanse(json_data.get("description", "")) or "No description available."
+        description  = cleanse(json_data.get("description")) if json_data.get("description") else "No description available."
         headshot     = json_data.get("headshot")
         overlay      = json_data.get("overlay")
         roblox_id    = json_data.get("id")
