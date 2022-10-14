@@ -179,7 +179,7 @@ IMAGE_CONFIG = {
     },
     "rainy_day": {
         "name": "Rainy Day",
-        "acquirable": False,
+        "acquirable": True,
         "available": True,
         "categories": [],
         "exclude_from_all_backgrounds": False,
