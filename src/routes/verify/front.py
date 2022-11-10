@@ -331,6 +331,7 @@ class Route:
                 return raw(bf.getvalue())
 
         except Exception as e:
+            print(e, flush=True)
             tb = traceback.format_exc()
 
             if ERROR_WEBHOOK:
